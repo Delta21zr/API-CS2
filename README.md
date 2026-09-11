@@ -1,39 +1,15 @@
-# Build Your First Ionic App: Photo Gallery (Ionic Angular and Capacitor)
+# CS2 Portfolio & Market Tracker
 
-Get started with Ionic by building a photo gallery app that runs on iOS, Android, and the web - with just one codebase. This is the complete project referenced in the ["Your First App: Angular" guide](https://ionicframework.com/docs/angular/your-first-app). Follow along to create a complete CRUD (create-read-update-delete) experience.
+## Objetivo de la aplicación
+Esta aplicación móvil (desarrollada con Ionic y Angular) tiene como objetivo permitir a los jugadores y traders de Counter-Strike 2 (CS2) monitorizar el valor de su inventario en tiempo real. La app sigue las fluctuaciones del mercado utilizando APIs de terceros, ayuda a proyectar ganancias, registra el historial de compras y permite configurar alertas personalizadas cuando un ítem alcanza un precio objetivo.
 
-Powered by [Ionic Angular](https://ionicframework.com/docs/angular/overview) (web app) and [Capacitor](https://capacitor.ionicframework.com) (native app runtime).
+## Tecnologías utilizadas
+- **Frontend:** Ionic Framework + Angular
+- **Backend/Base de Datos:** PostgreSQL
+- **APIs de terceros:** CS:GO Backpack API / Steam Web API
 
-## How It Works
-
-After the user navigates to Tab 2 (Photos), they can tap/click on the camera button to open up the device's camera. After taking or selecting a photo, it's stored permanently into the device's filesystem. When the user reopens the app at a later time, the photo images are loaded from the filesystem and displayed again in the gallery. The user can tap on a photo to be presented with the option to remove the photo.
-
-## Feature Overview
-* App framework: [Angular](https://angular.io)
-* UI components: [Ionic Framework](https://ionicframework.com/docs/components)
-  * Camera button: [Floating Action Button (FAB)](https://ionicframework.com/docs/api/fab)
-  * Photo Gallery display: [Grid](https://ionicframework.com/docs/api/grid)
-  * Delete Photo dialog: [Action Sheet](https://ionicframework.com/docs/api/action-sheet) 
-* Native runtime: [Capacitor](https://capacitor.ionicframework.com)
-  * Taking photos: [Camera API](https://capacitor.ionicframework.com/docs/apis/camera)
-  * Writing photo to the filesystem: [Filesystem API](https://capacitor.ionicframework.com/docs/apis/filesystem)
-  * Storing photo gallery metadata: [Preferences API](https://capacitor.ionicframework.com/docs/apis/preferences)
-
-## Project Structure
-* Tab2 (Photos) (`src/app/tab2/`): Photo Gallery UI and basic logic.
-* PhotoService (`src/app/services/photo.service.ts`): Logic encapsulating Capacitor APIs, including Camera, Filesystem, and Preferences.
-
-## How to Run
-
-> [!TIP]
-> It's highly recommended to follow along with the [tutorial guide](https://ionicframework.com/docs/angular/your-first-app), which goes into more depth, but this is the fastest way to run the app.
-
-> [!IMPORTANT]
-> Requires Node `^22.22.3 || ^24.15.0 || >=26.0.0` (Angular 22).
-
-1) Install the Ionic CLI (if you haven't already): `npm install -g @ionic/cli`
-2) Clone the repository: `git clone https://github.com/ionic-team/tutorial-photo-gallery-angular`
-3) Navigate to the project directory: `cd tutorial-photo-gallery-angular`
-4) Install the project dependencies: `npm install`
-5) Run the app in your browser: `ionic serve`
-6) Run the app on iOS or Android: Follow the [Capacitor Workflow](https://capacitorjs.com/docs/basics/workflow) guide for instructions on building and running the app on a native platform.
+## Estructura de Vistas (Entregable)
+- **Login:** Autenticación de usuarios para proteger el inventario.
+- **Portafolio (Tab 1):** Muestra el inventario local del usuario con su valor de compra frente al valor actual.
+- **Mercado (Tab 2):** Vista de exploración que consume la API para ver ítems en tendencia y variaciones de precio.
+- **Alertas (Tab 3):** Panel de configuración de notificaciones de precios.
