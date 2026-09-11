@@ -4,12 +4,12 @@ import {
   IonToolbar,
   IonTitle,
   IonContent,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonFab,
-  IonFabButton,
-  IonIcon,
+  IonSearchbar,
+  IonList,
+  IonListHeader,
+  IonLabel,
+  IonItem,
+  IonThumbnail,
   ActionSheetController,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
@@ -21,7 +21,7 @@ import { PhotoService } from '../services/photo.service';
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss'],
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonGrid, IonRow, IonCol, IonFab, IonFabButton, IonIcon],
+  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonSearchbar, IonList, IonListHeader, IonLabel, IonItem, IonThumbnail],
 })
 export class Tab2Page implements OnInit {
   public photoService = inject(PhotoService);

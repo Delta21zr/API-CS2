@@ -1,16 +1,18 @@
-ion-col > button {
-  display: block;
-  width: 100%;
-  background: none;
-  border: none;
-  padding: 0;
-  margin: 0;
-  cursor: pointer;
-  font: inherit;
+.cs2-bg {
+  --background: #121212;
 }
-
-button img {
-  display: block;
-  width: 100%;
-  height: auto;
+.inventory-list { background: transparent; }
+.inventory-list ion-list-header { color: #5d79ae; font-weight: bold; text-transform: uppercase; }
+.cs-item {
+  --background: #1a1a1a;
+  --color: #fff;
+  margin: 5px 10px;
+  border-radius: 5px;
+  &.item-mil-spec { border-left: 4px solid #4b69ff; }
+  ion-thumbnail { --size: 60px; background: #2a2a2a; border-radius: 4px; padding: 2px; }
+  h2 { font-weight: bold; }
+  p { color: #aaa; font-size: 0.8rem; }
 }
+.price-info { text-align: right; }
+.current-price { color: #fff; font-weight: bold; margin: 0 0 5px 0; }
+.profit { font-weight: bold; &.positive { color: #4caf50; } &.negative { color: #f44336; } }

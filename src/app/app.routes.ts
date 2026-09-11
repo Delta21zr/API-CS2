@@ -14,7 +14,7 @@ export const routes: Routes = [
   },
   // La ruta de tus pestañas (las protege o las cargas tras loguear)
   {
-    path: 'tabs',
+    path: '', // Se deja vacío porque tabs.routes.ts ya define el prefijo 'tabs'
     loadChildren: () => import('./tabs/tabs.routes').then((m) => m.routes),
   }
 ];

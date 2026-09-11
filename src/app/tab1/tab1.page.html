@@ -1,61 +1,64 @@
-<ion-content [fullscreen]="true" class="no-scroll">
-  <div id="back">
-    <!-- Colores de fondo -->
-    <div class="backRight"></div>
-    <div class="backLeft"></div>
-    <!-- Canvas debe ir al final para que no sea tapado por los colores, y SOLO DEBE HABER UNO -->
-    <canvas id="canvas" class="canvas-back" resize="true" #canvasElement></canvas>
+<ion-header [translucent]="true">
+  <ion-toolbar color="dark">
+    <ion-title>
+      Mi Portafolio CS2
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="cs2-bg">
+  <ion-header collapse="condense">
+    <ion-toolbar color="dark">
+      <ion-title size="large">Portafolio</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="stats-container">
+    <ion-card class="stats-card ct-border">
+      <ion-card-header>
+        <ion-card-subtitle>Valor Total</ion-card-subtitle>
+        <ion-card-title>$1,245.50</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <span class="profit positive"><ion-icon name="caret-up"></ion-icon> $45.20 (+3.7%)</span>
+      </ion-card-content>
+    </ion-card>
   </div>
 
-  <div id="slideBox" [ngStyle]="{'margin-left': slideBoxMargin}">
-    <div class="topLayer" [ngStyle]="{'margin-left': topLayerMargin}">
-      <div class="left">
-        <div class="content">
-          <h2>Sign Up</h2>
-          <form id="form-signup" (ngSubmit)="onSignup()">
-            <div class="form-element form-stack">
-              <label for="email" class="form-label">Email</label>
-              <input id="email" type="email" name="email">
-            </div>
-            <div class="form-element form-stack">
-              <label for="username-signup" class="form-label">Username</label>
-              <input id="username-signup" type="text" name="username">
-            </div>
-            <div class="form-element form-stack">
-              <label for="password-signup" class="form-label">Password</label>
-              <input id="password-signup" type="password" name="password">
-            </div>
-            <div class="form-element form-checkbox">
-              <input id="confirm-terms" type="checkbox" name="confirm" value="yes" class="checkbox">
-              <label for="confirm-terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy
-                  Policy</a></label>
-            </div>
-            <div class="form-element form-submit">
-              <button id="signUp" class="signup" type="submit" name="signup">Sign up</button>
-              <button id="goLeft" class="signup off" type="button" (click)="goToLogin()">Log In</button>
-            </div>
-          </form>
-        </div>
+  <ion-list class="inventory-list">
+    <ion-list-header>
+      <ion-label>Skins Recientes</ion-label>
+    </ion-list-header>
+
+    <!-- Item de Ejemplo: AK-47 -->
+    <ion-item class="cs-item item-covert">
+      <ion-thumbnail slot="start">
+        <img src="https://img.icons8.com/color/96/assault-rifle.png" alt="AK-47 Redline" />
+      </ion-thumbnail>
+      <ion-label>
+        <h2>AK-47 | Redline</h2>
+        <p>Field-Tested</p>
+      </ion-label>
+      <div class="price-info" slot="end">
+        <h3 class="current-price">$22.50</h3>
+        <span class="buy-price">Comprado: $18.00</span>
       </div>
-      <div class="right">
-        <div class="content">
-          <h2>Login</h2>
-          <form id="form-login" (ngSubmit)="onLogin()">
-            <div class="form-element form-stack">
-              <label for="username-login" class="form-label">Username</label>
-              <input id="username-login" type="text" name="username">
-            </div>
-            <div class="form-element form-stack">
-              <label for="password-login" class="form-label">Password</label>
-              <input id="password-login" type="password" name="password">
-            </div>
-            <div class="form-element form-submit">
-              <button id="logIn" class="login" type="submit" name="login">Log In</button>
-              <button id="goRight" class="login off" type="button" (click)="goToSignup()">Sign Up</button>
-            </div>
-          </form>
-        </div>
+    </ion-item>
+
+    <!-- Item de Ejemplo: M4A1-S -->
+    <ion-item class="cs-item item-restricted">
+      <ion-thumbnail slot="start">
+        <img src="https://img.icons8.com/color/96/gun.png" alt="M4A1-S Decimator" />
+      </ion-thumbnail>
+      <ion-label>
+        <h2>M4A1-S | Decimator</h2>
+        <p>Minimal Wear</p>
+      </ion-label>
+      <div class="price-info" slot="end">
+        <h3 class="current-price">$15.30</h3>
+        <span class="buy-price">Comprado: $16.00</span>
       </div>
-    </div>
-  </div>
+    </ion-item>
+
+  </ion-list>
 </ion-content>

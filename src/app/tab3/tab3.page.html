@@ -1,17 +1,44 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
+  <ion-toolbar color="dark">
     <ion-title>
-      Tab 3
+      Alertas de Precio
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 3</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="cs2-bg">
+  <div class="alerts-header">
+    <p>Configura notificaciones para aprovechar las bajadas del mercado.</p>
+  </div>
 
-  <app-explore-container name="Tab 3 page"></app-explore-container>
+  <ion-list class="cs-list">
+    <ion-list-header>
+      <ion-label>Mis Alertas Activas</ion-label>
+    </ion-list-header>
+
+    <ion-item class="cs-item">
+      <ion-icon name="notifications" slot="start" color="warning"></ion-icon>
+      <ion-label>
+        <h2>AK-47 | Redline</h2>
+        <p>Avisar si baja de: <strong>$15.00</strong></p>
+      </ion-label>
+      <ion-toggle slot="end" checked="true" color="warning"></ion-toggle>
+    </ion-item>
+
+    <ion-item class="cs-item">
+      <ion-icon name="notifications-off" slot="start" color="medium"></ion-icon>
+      <ion-label>
+        <h2>AWP | Asiimov</h2>
+        <p>Avisar si baja de: <strong>$60.00</strong></p>
+      </ion-label>
+      <ion-toggle slot="end" checked="false" color="warning"></ion-toggle>
+    </ion-item>
+  </ion-list>
+
+  <div class="action-container">
+    <ion-button expand="block" class="cs-button-ct">
+      <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+      Crear Nueva Alerta
+    </ion-button>
+  </div>
 </ion-content>

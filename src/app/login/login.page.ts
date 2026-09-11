@@ -2,17 +2,19 @@
 import { Component, ElementRef, ViewChild, AfterViewInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent } from '@ionic/angular';
-import { Router } from '@angular/router'; // Para redirigir tras el login
+import { IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonIcon, IonInput, IonButton } from '@ionic/angular';
+import { Router, RouterModule } from '@angular/router';
 import { PaperScope, Path, Group, Color, Point, Size } from 'paper';
 import axios from 'axios';
+import { addIcons } from 'ionicons';
+import { personOutline, lockClosedOutline, skullOutline, shieldHalfOutline, locateOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-login',
   templateUrl: 'login.page.html',
   styleUrls: ['login.page.scss'],
   standalone: true,
-  imports: [IonContent, CommonModule, FormsModule]
+  imports: [IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonIcon, IonInput, IonButton, CommonModule, FormsModule, RouterModule]
 })
 export class LoginPage implements AfterViewInit {
   @ViewChild('canvasElement', { static: true }) canvasElement!: ElementRef<HTMLCanvasElement>;
@@ -34,7 +36,9 @@ export class LoginPage implements AfterViewInit {
   canvasMiddleX!: number;
   canvasMiddleY!: number;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router) {
+    addIcons({ personOutline, lockClosedOutline, skullOutline, shieldHalfOutline, locateOutline });
+  }
 
   // ======================
   // Peticiones HTTP con Axios

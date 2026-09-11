@@ -1,60 +1,42 @@
-login.page.html
-<ion-content [fullscreen]="true" class="no-scroll">
-  <div id="back">
-    <div class="backRight"></div>
-    <div class="backLeft"></div>
-    <canvas id="canvas" class="canvas-back" resize="true" #canvasElement></canvas>
-  </div>
+<ion-content class="cs2-login-bg">
+  <!-- Canvas de tu animación original en Paper.js -->
+  <canvas #canvasElement class="background-canvas"></canvas>
+  <div class="overlay"></div>
 
-  <div id="slideBox" [ngStyle]="{'margin-left': slideBoxMargin}">
-    <div class="topLayer" [ngStyle]="{'margin-left': topLayerMargin}">
-      <div class="left">
-        <div class="content">
-          <h2>Sign Up</h2>
-          <form id="form-signup" (ngSubmit)="onSignup()">
-            <div class="form-element form-stack">
-              <label for="email" class="form-label">Email</label>
-              <input id="email" type="email" name="email" [(ngModel)]="signupData.email">
-            </div>
-            <div class="form-element form-stack">
-              <label for="username-signup" class="form-label">Username</label>
-              <input id="username-signup" type="text" name="username" [(ngModel)]="signupData.username">
-            </div>
-            <div class="form-element form-stack">
-              <label for="password-signup" class="form-label">Password</label>
-              <input id="password-signup" type="password" name="password" [(ngModel)]="signupData.password">
-            </div>
-            <div class="form-element form-checkbox">
-              <input id="confirm-terms" type="checkbox" name="confirm" value="yes" class="checkbox">
-              <label for="confirm-terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy
-                  Policy</a></label>
-            </div>
-            <div class="form-element form-submit">
-              <button id="signUp" class="signup" type="submit">Sign up</button>
-              <button id="goLeft" class="signup off" type="button" (click)="goToLogin()">Log In</button>
-            </div>
-          </form>
-        </div>
+  <div class="login-container">
+    <div class="logo-container">
+      <div class="cs-logo-mock">
+        <ion-icon name="locate-outline"></ion-icon>
       </div>
-      <div class="right">
-        <div class="content">
-          <h2>Login</h2>
-          <form id="form-login" (ngSubmit)="onLogin()">
-            <div class="form-element form-stack">
-              <label for="username-login" class="form-label">Username</label>
-              <input id="username-login" type="text" name="username" [(ngModel)]="loginData.username">
-            </div>
-            <div class="form-element form-stack">
-              <label for="password-login" class="form-label">Password</label>
-              <input id="password-login" type="password" name="password" [(ngModel)]="loginData.password">
-            </div>
-            <div class="form-element form-submit">
-              <button id="logIn" class="login" type="submit">Log In</button>
-              <button id="goRight" class="login off" type="button" (click)="goToSignup()">Sign Up</button>
-            </div>
-          </form>
-        </div>
-      </div>
+      <h1 class="app-title">CS2 <span class="highlight">TRACKER</span></h1>
     </div>
+
+    <ion-card class="login-card">
+      <ion-card-header>
+        <ion-card-title class="ion-text-center">Iniciar Sesión</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-item class="cs-input">
+          <ion-icon name="person-outline" slot="start" color="warning"></ion-icon>
+          <ion-input placeholder="Usuario" type="text" [(ngModel)]="loginData.username"></ion-input>
+        </ion-item>
+
+        <ion-item class="cs-input">
+          <ion-icon name="lock-closed-outline" slot="start" color="warning"></ion-icon>
+          <ion-input placeholder="Contraseña" type="password" [(ngModel)]="loginData.password"></ion-input>
+        </ion-item>
+
+        <ion-button expand="block" class="cs-button-t" routerLink="/tabs/tab1" routerDirection="root">
+          <ion-icon name="skull-outline" slot="start"></ion-icon>
+          Entrar como T
+        </ion-button>
+        
+        <ion-button expand="block" class="cs-button-ct" fill="outline" routerLink="/tabs/tab1" routerDirection="root">
+          <ion-icon name="shield-half-outline" slot="start"></ion-icon>
+          Entrar como CT
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
   </div>
 </ion-content>
