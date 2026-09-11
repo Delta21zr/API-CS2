@@ -33,3 +33,9 @@ npm-debug.log*
 
 # Stray Gradle cache (native build artifacts live under android/)
 /.gradle
+
+# Private and secret files
+*.env
+.env*
+environments/
+api.php

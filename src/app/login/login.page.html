@@ -1,9 +1,8 @@
+login.page.html
 <ion-content [fullscreen]="true" class="no-scroll">
   <div id="back">
-    <!-- Colores de fondo -->
     <div class="backRight"></div>
     <div class="backLeft"></div>
-    <!-- Canvas debe ir al final para que no sea tapado por los colores, y SOLO DEBE HABER UNO -->
     <canvas id="canvas" class="canvas-back" resize="true" #canvasElement></canvas>
   </div>
 
@@ -15,15 +14,15 @@
           <form id="form-signup" (ngSubmit)="onSignup()">
             <div class="form-element form-stack">
               <label for="email" class="form-label">Email</label>
-              <input id="email" type="email" name="email">
+              <input id="email" type="email" name="email" [(ngModel)]="signupData.email">
             </div>
             <div class="form-element form-stack">
               <label for="username-signup" class="form-label">Username</label>
-              <input id="username-signup" type="text" name="username">
+              <input id="username-signup" type="text" name="username" [(ngModel)]="signupData.username">
             </div>
             <div class="form-element form-stack">
               <label for="password-signup" class="form-label">Password</label>
-              <input id="password-signup" type="password" name="password">
+              <input id="password-signup" type="password" name="password" [(ngModel)]="signupData.password">
             </div>
             <div class="form-element form-checkbox">
               <input id="confirm-terms" type="checkbox" name="confirm" value="yes" class="checkbox">
@@ -31,7 +30,7 @@
                   Policy</a></label>
             </div>
             <div class="form-element form-submit">
-              <button id="signUp" class="signup" type="submit" name="signup">Sign up</button>
+              <button id="signUp" class="signup" type="submit">Sign up</button>
               <button id="goLeft" class="signup off" type="button" (click)="goToLogin()">Log In</button>
             </div>
           </form>
@@ -43,14 +42,14 @@
           <form id="form-login" (ngSubmit)="onLogin()">
             <div class="form-element form-stack">
               <label for="username-login" class="form-label">Username</label>
-              <input id="username-login" type="text" name="username">
+              <input id="username-login" type="text" name="username" [(ngModel)]="loginData.username">
             </div>
             <div class="form-element form-stack">
               <label for="password-login" class="form-label">Password</label>
-              <input id="password-login" type="password" name="password">
+              <input id="password-login" type="password" name="password" [(ngModel)]="loginData.password">
             </div>
             <div class="form-element form-submit">
-              <button id="logIn" class="login" type="submit" name="login">Log In</button>
+              <button id="logIn" class="login" type="submit">Log In</button>
               <button id="goRight" class="login off" type="button" (click)="goToSignup()">Sign Up</button>
             </div>
           </form>
