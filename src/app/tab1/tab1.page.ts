@@ -1,41 +1,53 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonToolbar, IonTitle, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCardContent, IonIcon, IonList, IonListHeader, IonLabel, IonItem, IonThumbnail } from '@ionic/angular';
-import axios from 'axios';
+import { IonContent, IonHeader, IonToolbar, IonTitle, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCardContent, IonIcon, IonList, IonListHeader, IonLabel, IonItem, IonThumbnail, IonButton, IonInput, IonButtons } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { caretUp } from 'ionicons/icons';
+import { caretUp, trash, pencil } from 'ionicons/icons';
+import { ApiService } from '../services/api.service';
+import { MarketItem } from '../interfaces/models';
 
 @Component({
   selector: 'app-tab1',
   templateUrl: './tab1.page.html',
   styleUrls: ['./tab1.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonToolbar, IonTitle, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCardContent, IonIcon, IonList, IonListHeader, IonLabel, IonItem, IonThumbnail, CommonModule, FormsModule]
+  imports: [IonContent, IonHeader, IonToolbar, IonTitle, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCardContent, IonIcon, IonList, IonListHeader, IonLabel, IonItem, IonThumbnail, IonButton, IonInput, IonButtons, CommonModule, FormsModule]
 })
-export class Tab1Page implements AfterViewInit {
-  loginData = { username: '', password: '' };
+export class Tab1Page implements OnInit {
+  marketItems: MarketItem[] = [];
+  newItem: MarketItem = { item_id: '', name: '', current_price: 0 };
 
-  constructor() {
-    addIcons({ caretUp });
+  constructor(private apiService: ApiService) {
+    addIcons({ caretUp, trash, pencil });
   }
 
-  ngAfterViewInit() {
-    // La vista ya no necesita PaperJS
+  ngOnInit() {
+    this.loadItems();
   }
 
-  async onLogin() {
-    try {
-      const apiUrl = 'http://localhost/api_ionic/login.php';
-      const response = await axios.post(apiUrl, this.loginData);
-      if (response.data.success) {
-        alert('Login exitoso: ' + response.data.message);
-      } else {
-        alert('Error: ' + response.data.message);
-      }
-    } catch (error) {
-      console.error('Error al conectar con la API', error);
-      alert('No se pudo conectar con el servidor.');
-    }
+  loadItems() {
+    this.apiService.getMarketItems().subscribe({
+      next: (data) => this.marketItems = data,
+      error: (err) => console.error('Error cargando items', err)
+    });
+  }
+
+  addItem() {
+    if(!this.newItem.item_id || !this.newItem.name) return;
+    this.apiService.createMarketItem(this.newItem).subscribe({
+      next: () => {
+        this.loadItems();
+        this.newItem = { item_id: '', name: '', current_price: 0 }; // reset
+      },
+      error: (err) => console.error('Error creando', err)
+    });
+  }
+
+  deleteItem(id: string) {
+    this.apiService.deleteMarketItem(id).subscribe({
+      next: () => this.loadItems(),
+      error: (err) => console.error('Error borrando', err)
+    });
   }
 }

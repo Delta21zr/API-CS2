@@ -1,63 +1,61 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="dark">
-    <ion-title>
-      Mi Portafolio CS2
-    </ion-title>
+    <ion-title>Catálogo CS2</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="cs2-bg">
   <ion-header collapse="condense">
     <ion-toolbar color="dark">
-      <ion-title size="large">Portafolio</ion-title>
+      <ion-title size="large">Catálogo CS2</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <div class="stats-container">
-    <ion-card class="stats-card ct-border">
-      <ion-card-header>
-        <ion-card-subtitle>Valor Total</ion-card-subtitle>
-        <ion-card-title>$1,245.50</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <span class="profit positive"><ion-icon name="caret-up"></ion-icon> $45.20 (+3.7%)</span>
-      </ion-card-content>
-    </ion-card>
-  </div>
+  <!-- FORMULARIO PARA CREAR (POST) -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Agregar Nuevo Ítem al Mercado</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-input label="ID (Ej. ak47-redline)" labelPlacement="floating" [(ngModel)]="newItem.item_id"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input label="Nombre (Ej. AK-47 | Redline)" labelPlacement="floating" [(ngModel)]="newItem.name"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input label="Precio Actual ($)" type="number" labelPlacement="floating" [(ngModel)]="newItem.current_price"></ion-input>
+      </ion-item>
+      <ion-button expand="block" (click)="addItem()" class="ion-margin-top" color="success">Guardar Ítem</ion-button>
+    </ion-card-content>
+  </ion-card>
 
+  <!-- LISTA PARA LEER Y BORRAR (GET / DELETE) -->
   <ion-list class="inventory-list">
     <ion-list-header>
-      <ion-label>Skins Recientes</ion-label>
+      <ion-label>Ítems en Base de Datos</ion-label>
     </ion-list-header>
 
-    <!-- Item de Ejemplo: AK-47 -->
-    <ion-item class="cs-item item-covert">
-      <ion-thumbnail slot="start">
-        <img src="https://img.icons8.com/color/96/assault-rifle.png" alt="AK-47 Redline" />
-      </ion-thumbnail>
-      <ion-label>
-        <h2>AK-47 | Redline</h2>
-        <p>Field-Tested</p>
-      </ion-label>
-      <div class="price-info" slot="end">
-        <h3 class="current-price">$22.50</h3>
-        <span class="buy-price">Comprado: $18.00</span>
-      </div>
+    <ion-item *ngIf="marketItems.length === 0">
+      <ion-label class="ion-text-center">No hay ítems registrados aún.</ion-label>
     </ion-item>
 
-    <!-- Item de Ejemplo: M4A1-S -->
-    <ion-item class="cs-item item-restricted">
+    <ion-item *ngFor="let item of marketItems" class="cs-item">
       <ion-thumbnail slot="start">
-        <img src="https://img.icons8.com/color/96/gun.png" alt="M4A1-S Decimator" />
+        <img [src]="item.image_url || 'https://img.icons8.com/color/96/gun.png'" alt="skin" />
       </ion-thumbnail>
       <ion-label>
-        <h2>M4A1-S | Decimator</h2>
-        <p>Minimal Wear</p>
+        <h2>{{ item.name }}</h2>
+        <p>ID: {{ item.item_id }}</p>
       </ion-label>
       <div class="price-info" slot="end">
-        <h3 class="current-price">$15.30</h3>
-        <span class="buy-price">Comprado: $16.00</span>
+        <h3 class="current-price">${{ item.current_price }}</h3>
       </div>
+      <ion-buttons slot="end">
+        <ion-button color="danger" (click)="deleteItem(item.item_id)">
+          <ion-icon name="trash"></ion-icon>
+        </ion-button>
+      </ion-buttons>
     </ion-item>
 
   </ion-list>
