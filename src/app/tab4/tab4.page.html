@@ -1,0 +1,82 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="dark">
+    <ion-title>Trade-Up Simulator</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="cs2-bg ion-padding">
+  
+  <div class="ion-text-center" style="margin-bottom: 20px;">
+    <ion-icon name="flask" style="font-size: 4rem; color: #9c27b0;"></ion-icon>
+    <h2 style="color: white; font-weight: bold; margin-top: 5px;">Contrato de Mejora</h2>
+    <p style="color: #bbb;">Selecciona 10 armas de tu inventario para introducirlas en el contrato.</p>
+  </div>
+
+  <!-- Barra de Progreso y Costo -->
+  <ion-card color="dark" style="margin-bottom: 20px; border: 1px solid #333;">
+    <ion-card-content class="ion-text-center">
+      <h1 style="margin: 0; color: white;">
+        <span [ngStyle]="{'color': selectedCount === 10 ? '#4CAF50' : '#FF9800'}">
+          {{ selectedCount }} / 10
+        </span>
+      </h1>
+      <p style="color: #aaa; font-size: 0.9rem;">Costo del Contrato: 
+        <strong style="color: white;">${{ totalCost | number:'1.2-2' }}</strong>
+      </p>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Botón Simular -->
+  <ion-button expand="block" color="tertiary" 
+              [disabled]="selectedCount !== 10 || isSimulating" 
+              (click)="simulateTradeUp()"
+              style="margin-bottom: 20px; font-weight: bold;">
+    {{ isSimulating ? 'SIMULANDO...' : 'FIRMAR CONTRATO' }}
+  </ion-button>
+
+  <!-- RESULTADO DEL CONTRATO -->
+  <ion-card *ngIf="resultItem" [color]="getProfitOrLoss() >= 0 ? 'success' : 'danger'" style="margin-bottom: 30px;">
+    <ion-card-header class="ion-text-center">
+      <ion-icon [name]="getProfitOrLoss() >= 0 ? 'checkmark-circle' : 'close-circle'" style="font-size: 3rem;"></ion-icon>
+      <ion-card-title style="color: white; font-weight: bold;">
+        {{ getProfitOrLoss() >= 0 ? '¡PROFIT!' : '¡PERDIDA!' }}
+      </ion-card-title>
+      <ion-card-subtitle style="color: white; opacity: 0.9;">Recibiste:</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content class="ion-text-center">
+      <img [src]="resultItem.image_url" style="max-height: 120px; margin-bottom: 10px;" />
+      <h2 style="color: white; font-weight: bold;">{{ resultItem.name }} ({{ resultItem.exterior }})</h2>
+      <h3 style="color: white;">Valor: ${{ resultItem.current_price }}</h3>
+      <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; margin-top: 15px;">
+        Tu balance: <strong>${{ getProfitOrLoss() | number:'1.2-2' }}</strong>
+      </div>
+      <ion-button expand="block" color="light" fill="outline" style="margin-top: 15px;" (click)="resetSimulation()">Intentar de Nuevo</ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Lista del Inventario para Seleccionar -->
+  <h3 style="color: white; margin-left: 10px;">Tu Inventario</h3>
+  
+  <div *ngIf="inventoryItems.length < 10" class="ion-text-center ion-padding" style="color: #FF9800; border: 1px solid #FF9800; border-radius: 8px;">
+    Necesitas al menos 10 armas en tu inventario para simular un contrato. (Ve a la pestaña Mercado y registra compras ficticias).
+  </div>
+
+  <ion-list class="inventory-list" *ngIf="inventoryItems.length >= 10">
+    <ion-item *ngFor="let item of inventoryItems" class="cs-item" (click)="toggleSelection(item)" button detail="false">
+      <!-- Checkbox personalizado controlado por el click del item -->
+      <ion-checkbox slot="start" 
+                    [checked]="item.id !== undefined && selectedItems[item.id]" 
+                    [disabled]="selectedCount >= 10 && item.id !== undefined && !selectedItems[item.id]">
+      </ion-checkbox>
+      
+      <ion-thumbnail slot="start">
+        <img [src]="item.image_url" />
+      </ion-thumbnail>
+      <ion-label>
+        <h2>{{ item.name }}</h2>
+        <p style="color: #999;">Costo: ${{ item.purchase_price }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+</ion-content>

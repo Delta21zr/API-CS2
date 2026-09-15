@@ -65,4 +65,11 @@ export class ApiService {
   createAlert(alert: PriceAlert) { return this.create('price_alerts', alert); }
   updateAlert(id: number, alert: PriceAlert) { return this.update('price_alerts', id, alert); }
   deleteAlert(id: number) { return this.remove('price_alerts', id); }
+
+  // ==========================
+  // HISTORIAL DE PRECIOS
+  // ==========================
+  getPriceHistory(item_id: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}?table=price_history&item_id=${item_id}`);
+  }
 }

@@ -3,6 +3,7 @@ import { RouteReuseStrategy, provideRouter, withPreloading, PreloadAllModules } 
 import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular';
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { provideHttpClient } from '@angular/common/http';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
@@ -16,5 +17,6 @@ bootstrapApplication(AppComponent, {
     provideIonicAngular(),
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideHttpClient(),
+    provideCharts(withDefaultRegisterables())
   ],
 }).catch((err) => console.error(err));

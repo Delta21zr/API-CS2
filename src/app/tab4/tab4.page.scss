@@ -1,0 +1,25 @@
+.cs2-bg {
+  --background: #121212;
+}
+
+.cs-item-card {
+  background: #1e1e1e;
+  border-radius: 8px;
+  border: 1px solid #333;
+}
+
+.inventory-list {
+  background: transparent;
+  .cs-item {
+    --background: #1e1e1e;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    --border-color: #333;
+    
+    h2 {
+      color: white;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+  }
+}

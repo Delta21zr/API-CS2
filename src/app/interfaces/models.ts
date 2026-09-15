@@ -41,3 +41,11 @@ export interface PriceAlert {
   is_active?: boolean;
   created_at?: string;
 }
+
+export interface PriceHistory {
+  id?: number;
+  item_id: string;
+  price: number;
+  volume: number;
+  recorded_at: string;
+}

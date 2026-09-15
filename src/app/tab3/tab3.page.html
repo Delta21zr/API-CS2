@@ -1,44 +1,82 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="dark">
-    <ion-title>
-      Alertas de Precio
-    </ion-title>
+    <ion-title>Asistente & Análisis</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="cs2-bg">
-  <div class="alerts-header">
-    <p>Configura notificaciones para aprovechar las bajadas del mercado.</p>
-  </div>
-
-  <ion-list class="cs-list">
-    <ion-list-header>
-      <ion-label>Mis Alertas Activas</ion-label>
-    </ion-list-header>
-
-    <ion-item class="cs-item">
-      <ion-icon name="notifications" slot="start" color="warning"></ion-icon>
+<ion-content [fullscreen]="true" class="cs2-bg ion-padding">
+  
+  <!-- Buscador (Autocompletado) -->
+  <ion-searchbar placeholder="Busca un arma para analizar..." [value]="searchTerm" (ionInput)="filterCatalog($event)" color="dark"></ion-searchbar>
+  
+  <!-- Lista de Resultados -->
+  <ion-list *ngIf="filteredCatalog.length > 0" style="background: #1e1e1e; border-radius: 8px; margin-bottom: 20px;">
+    <ion-item *ngFor="let m of filteredCatalog" button (click)="selectWeapon(m)" style="--background: transparent; color: white;">
+      <ion-thumbnail slot="start">
+        <img [src]="m.image_url" />
+      </ion-thumbnail>
       <ion-label>
-        <h2>AK-47 | Redline</h2>
-        <p>Avisar si baja de: <strong>$15.00</strong></p>
+        <h2>{{ m.name }}</h2>
+        <p style="color: #aaa;">{{ m.exterior }}</p>
       </ion-label>
-      <ion-toggle slot="end" checked="true" color="warning"></ion-toggle>
-    </ion-item>
-
-    <ion-item class="cs-item">
-      <ion-icon name="notifications-off" slot="start" color="medium"></ion-icon>
-      <ion-label>
-        <h2>AWP | Asiimov</h2>
-        <p>Avisar si baja de: <strong>$60.00</strong></p>
-      </ion-label>
-      <ion-toggle slot="end" checked="false" color="warning"></ion-toggle>
     </ion-item>
   </ion-list>
 
-  <div class="action-container">
-    <ion-button expand="block" class="cs-button-ct">
-      <ion-icon name="add-circle-outline" slot="start"></ion-icon>
-      Crear Nueva Alerta
-    </ion-button>
+  <!-- Arma Seleccionada -->
+  <ion-item class="cs-item-card" lines="none" style="margin-bottom: 20px; border-radius: 8px;" *ngIf="selectedItem">
+    <ion-thumbnail slot="start">
+      <img [src]="selectedItem.image_url" />
+    </ion-thumbnail>
+    <ion-label>
+      <h2 style="font-weight: bold; font-size: 1.1rem; color: white;">{{ selectedItem.name }}</h2>
+      <p style="color: #4CAF50;">Precio Actual: ${{ selectedItem.current_price }}</p>
+    </ion-label>
+  </ion-item>
+
+  <!-- Spinner de Carga -->
+  <div *ngIf="isLoading" class="ion-text-center ion-padding">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p style="color:white;">Analizando el mercado histórico...</p>
   </div>
+
+  <!-- Contenido Principal -->
+  <div *ngIf="!isLoading && selectedItemId && lineChartData.datasets.length > 0">
+    
+    <!-- Asistente Inteligente (Recomendación) -->
+    <ion-card [color]="assistantColor" class="ion-margin-bottom">
+      <ion-card-header>
+        <ion-card-title style="color: white; font-weight: bold; font-size: 1.2rem;">
+          {{ assistantTitle }}
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content style="color: white; font-size: 1rem;">
+        {{ assistantMessage }}
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Gráfica Chart.js -->
+    <ion-card class="cs-item-card">
+      <ion-card-header>
+        <ion-card-subtitle>Historial 30 Días</ion-card-subtitle>
+        <ion-card-title>Tendencia de Precio</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div style="display: block;">
+          <canvas baseChart
+            [data]="lineChartData"
+            [options]="lineChartOptions"
+            [type]="lineChartType">
+          </canvas>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Estado Inicial -->
+  <div *ngIf="!selectedItemId" class="ion-text-center ion-padding" style="color: #aaa; margin-top: 50px;">
+    <ion-icon name="analytics" style="font-size: 4rem; opacity: 0.5;"></ion-icon>
+    <h2>Selecciona un arma</h2>
+    <p>Usa el menú superior para cargar el historial de precios y recibir consejos de compra/venta de nuestro Asistente Inteligente.</p>
+  </div>
+
 </ion-content>

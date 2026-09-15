@@ -36,7 +36,9 @@
     "@capacitor/status-bar": "^8.0.3",
     "@ionic/angular": "^9.0.0",
     "@ionic/pwa-elements": "^3.4.0",
+    "chart.js": "^4.5.1",
     "ionicons": "^8.1.0",
+    "ng2-charts": "^10.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },
