@@ -10,6 +10,9 @@ export interface User {
 export interface MarketItem {
   item_id: string;
   name: string;
+  exterior?: string;
+  rarity?: string;
+  collection_name?: string;
   image_url?: string;
   current_price?: number;
   last_updated?: string;
@@ -22,6 +25,12 @@ export interface UserInventory {
   purchase_price: number;
   quantity?: number;
   added_at?: string;
+  // Campos visuales traídos desde el JOIN con market_items
+  name?: string;
+  image_url?: string;
+  current_price?: number;
+  rarity?: string;
+  exterior?: string;
 }
 
 export interface PriceAlert {

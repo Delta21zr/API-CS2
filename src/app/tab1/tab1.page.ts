@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonToolbar, IonTitle, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCardContent, IonIcon, IonList, IonListHeader, IonLabel, IonItem, IonThumbnail, IonButton, IonInput, IonButtons } from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
-import { caretUp, trash, pencil } from 'ionicons/icons';
+import { IonContent, IonHeader, IonToolbar, IonTitle, IonList, IonItem, IonThumbnail, IonLabel, IonBadge, IonSearchbar, IonGrid, IonRow, IonCol, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCardSubtitle } from '@ionic/angular';
 import { ApiService } from '../services/api.service';
 import { MarketItem } from '../interfaces/models';
 
@@ -12,15 +10,14 @@ import { MarketItem } from '../interfaces/models';
   templateUrl: './tab1.page.html',
   styleUrls: ['./tab1.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonToolbar, IonTitle, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCardContent, IonIcon, IonList, IonListHeader, IonLabel, IonItem, IonThumbnail, IonButton, IonInput, IonButtons, CommonModule, FormsModule]
+  imports: [IonContent, IonHeader, IonToolbar, IonTitle, IonList, IonItem, IonThumbnail, IonLabel, IonBadge, IonSearchbar, IonGrid, IonRow, IonCol, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCardSubtitle, CommonModule, FormsModule]
 })
 export class Tab1Page implements OnInit {
   marketItems: MarketItem[] = [];
-  newItem: MarketItem = { item_id: '', name: '', current_price: 0 };
+  filteredItems: MarketItem[] = [];
+  searchTerm: string = '';
 
-  constructor(private apiService: ApiService) {
-    addIcons({ caretUp, trash, pencil });
-  }
+  constructor(private apiService: ApiService) {}
 
   ngOnInit() {
     this.loadItems();
@@ -28,26 +25,38 @@ export class Tab1Page implements OnInit {
 
   loadItems() {
     this.apiService.getMarketItems().subscribe({
-      next: (data) => this.marketItems = data,
+      next: (data) => {
+        this.marketItems = data;
+        this.filteredItems = data;
+      },
       error: (err) => console.error('Error cargando items', err)
     });
   }
 
-  addItem() {
-    if(!this.newItem.item_id || !this.newItem.name) return;
-    this.apiService.createMarketItem(this.newItem).subscribe({
-      next: () => {
-        this.loadItems();
-        this.newItem = { item_id: '', name: '', current_price: 0 }; // reset
-      },
-      error: (err) => console.error('Error creando', err)
+  filterItems(event: any) {
+    const term = event.target.value.toLowerCase();
+    this.searchTerm = term;
+    
+    if (!term) {
+      this.filteredItems = this.marketItems;
+      return;
+    }
+
+    this.filteredItems = this.marketItems.filter(item => {
+      return item.name.toLowerCase().includes(term) || 
+             (item.collection_name && item.collection_name.toLowerCase().includes(term));
     });
   }
 
-  deleteItem(id: string) {
-    this.apiService.deleteMarketItem(id).subscribe({
-      next: () => this.loadItems(),
-      error: (err) => console.error('Error borrando', err)
-    });
+  // Helper color para la rareza
+  getRarityColor(rarity: string | undefined): string {
+    if (!rarity) return 'medium';
+    const r = rarity.toLowerCase();
+    if (r.includes('covert')) return 'danger';
+    if (r.includes('classified')) return 'tertiary'; // Rosa/Morado
+    if (r.includes('restricted')) return 'secondary'; // Morado oscuro
+    if (r.includes('mil-spec')) return 'primary'; // Azul
+    if (r.includes('industrial')) return 'medium'; // Celeste
+    return 'dark'; // Consumer grade o cajas
   }
 }

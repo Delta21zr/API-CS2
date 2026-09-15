@@ -2,6 +2,9 @@
   <ion-toolbar color="dark">
     <ion-title>Catálogo CS2</ion-title>
   </ion-toolbar>
+  <ion-toolbar color="dark">
+    <ion-searchbar (ionInput)="filterItems($event)" placeholder="Buscar por arma o colección..."></ion-searchbar>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="cs2-bg">
@@ -11,52 +14,34 @@
     </ion-toolbar>
   </ion-header>
 
-  <!-- FORMULARIO PARA CREAR (POST) -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Agregar Nuevo Ítem al Mercado</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-item>
-        <ion-input label="ID (Ej. ak47-redline)" labelPlacement="floating" [(ngModel)]="newItem.item_id"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-input label="Nombre (Ej. AK-47 | Redline)" labelPlacement="floating" [(ngModel)]="newItem.name"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-input label="Precio Actual ($)" type="number" labelPlacement="floating" [(ngModel)]="newItem.current_price"></ion-input>
-      </ion-item>
-      <ion-button expand="block" (click)="addItem()" class="ion-margin-top" color="success">Guardar Ítem</ion-button>
-    </ion-card-content>
-  </ion-card>
+  <div *ngIf="filteredItems.length === 0" class="ion-text-center ion-padding" style="color: white;">
+    <p>No se encontraron armas que coincidan con la búsqueda.</p>
+  </div>
 
-  <!-- LISTA PARA LEER Y BORRAR (GET / DELETE) -->
-  <ion-list class="inventory-list">
-    <ion-list-header>
-      <ion-label>Ítems en Base de Datos</ion-label>
-    </ion-list-header>
-
-    <ion-item *ngIf="marketItems.length === 0">
-      <ion-label class="ion-text-center">No hay ítems registrados aún.</ion-label>
-    </ion-item>
-
-    <ion-item *ngFor="let item of marketItems" class="cs-item">
-      <ion-thumbnail slot="start">
-        <img [src]="item.image_url || 'https://img.icons8.com/color/96/gun.png'" alt="skin" />
-      </ion-thumbnail>
-      <ion-label>
-        <h2>{{ item.name }}</h2>
-        <p>ID: {{ item.item_id }}</p>
-      </ion-label>
-      <div class="price-info" slot="end">
-        <h3 class="current-price">${{ item.current_price }}</h3>
-      </div>
-      <ion-buttons slot="end">
-        <ion-button color="danger" (click)="deleteItem(item.item_id)">
-          <ion-icon name="trash"></ion-icon>
-        </ion-button>
-      </ion-buttons>
-    </ion-item>
-
-  </ion-list>
+  <ion-grid>
+    <ion-row>
+      <!-- Mostrar las armas en tarjetas tipo grilla -->
+      <ion-col size="12" size-md="6" size-lg="4" *ngFor="let item of filteredItems">
+        <ion-card class="cs-item-card">
+          <ion-card-header class="ion-text-center">
+            <img [src]="item.image_url" alt="{{ item.name }}" style="max-height: 120px; object-fit: contain; margin: 0 auto; display: block;" />
+            <ion-card-title style="font-size: 1.1rem; margin-top: 10px;">{{ item.name }}</ion-card-title>
+            <ion-card-subtitle>{{ item.collection_name }}</ion-card-subtitle>
+          </ion-card-header>
+          
+          <ion-card-content>
+            <ion-item lines="none" class="ion-no-padding">
+              <ion-badge [color]="getRarityColor(item.rarity)" slot="start">
+                {{ item.rarity || 'Normal' }}
+              </ion-badge>
+              <div slot="end" class="ion-text-right">
+                <h3 style="color: #4CAF50; font-weight: bold; margin: 0;">${{ item.current_price }}</h3>
+                <small style="color: #aaa;">{{ item.exterior }}</small>
+              </div>
+            </ion-item>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>
