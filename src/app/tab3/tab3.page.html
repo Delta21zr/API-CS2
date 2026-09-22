@@ -42,32 +42,40 @@
   <!-- Contenido Principal -->
   <div *ngIf="!isLoading && selectedItemId && lineChartData.datasets.length > 0">
     
-    <!-- Asistente Inteligente (Recomendación) -->
-    <ion-card [color]="assistantColor" class="ion-margin-bottom">
+    <!-- Gráfica Histórica -->
+    <ion-card class="cs-item-card" *ngIf="!isLoading && selectedItemId && lineChartData.datasets.length > 0">
       <ion-card-header>
-        <ion-card-title style="color: white; font-weight: bold; font-size: 1.2rem;">
-          {{ assistantTitle }}
-        </ion-card-title>
-      </ion-card-header>
-      <ion-card-content style="color: white; font-size: 1rem;">
-        {{ assistantMessage }}
-      </ion-card-content>
-    </ion-card>
-
-    <!-- Gráfica Chart.js -->
-    <ion-card class="cs-item-card">
-      <ion-card-header>
-        <ion-card-subtitle>Historial 30 Días</ion-card-subtitle>
+        <ion-card-subtitle>
+          Historial {{ selectedRange }} Días
+        </ion-card-subtitle>
         <ion-card-title>Tendencia de Precio</ion-card-title>
       </ion-card-header>
+
       <ion-card-content>
-        <div style="display: block;">
-          <canvas baseChart
-            [data]="lineChartData"
-            [options]="lineChartOptions"
-            [type]="lineChartType">
-          </canvas>
-        </div>
+        <!-- Selector de Rango de Tiempo -->
+        <ion-segment [value]="selectedRange" (ionChange)="changeRange($event.detail.value)" mode="ios" style="margin-bottom: 15px;">
+          <ion-segment-button [value]="30">
+            <ion-label>30 Días</ion-label>
+          </ion-segment-button>
+          <ion-segment-button [value]="60">
+            <ion-label>60 Días</ion-label>
+          </ion-segment-button>
+          <ion-segment-button [value]="90">
+            <ion-label>90 Días</ion-label>
+          </ion-segment-button>
+          <ion-segment-button [value]="180">
+            <ion-label>6 Meses</ion-label>
+          </ion-segment-button>
+          <ion-segment-button [value]="365">
+            <ion-label>1 Año</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+
+        <canvas baseChart
+          [data]="lineChartData"
+          [options]="lineChartOptions"
+          [type]="lineChartType">
+        </canvas>
       </ion-card-content>
     </ion-card>
   </div>

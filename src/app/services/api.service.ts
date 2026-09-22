@@ -43,6 +43,7 @@ export class ApiService {
   // MARKET ITEMS
   // ==========================
   getMarketItems() { return this.getAll<MarketItem>('market_items'); }
+  searchMarketItems(term: string) { return this.http.get<MarketItem[]>(`${this.apiUrl}?table=market_items&search=${term}`); }
   getMarketItem(id: string) { return this.getOne<MarketItem>('market_items', id); }
   createMarketItem(item: MarketItem) { return this.create('market_items', item); }
   updateMarketItem(id: string, item: MarketItem) { return this.update('market_items', id, item); }

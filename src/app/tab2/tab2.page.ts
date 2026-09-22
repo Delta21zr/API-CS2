@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonList, IonItem, IonThumbnail, IonLabel, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCardSubtitle, IonButton, IonIcon, IonButtons, IonModal, IonInput, IonSearchbar } from '@ionic/angular';
@@ -6,6 +6,7 @@ import { addIcons } from 'ionicons';
 import { trash, add, wallet } from 'ionicons/icons';
 import { ApiService } from '../services/api.service';
 import { MarketItem, UserInventory } from '../interfaces/models';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-tab2',
@@ -14,7 +15,7 @@ import { MarketItem, UserInventory } from '../interfaces/models';
   standalone: true,
   imports: [IonContent, IonHeader, IonToolbar, IonTitle, IonList, IonItem, IonThumbnail, IonLabel, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCardSubtitle, IonButton, IonIcon, IonButtons, IonModal, IonInput, IonSearchbar, CommonModule, FormsModule]
 })
-export class Tab2Page implements OnInit {
+export class Tab2Page {
   inventoryItems: UserInventory[] = [];
   marketCatalog: MarketItem[] = [];
   filteredCatalog: MarketItem[] = [];
@@ -30,11 +31,11 @@ export class Tab2Page implements OnInit {
     quantity: 1
   };
 
-  constructor(private apiService: ApiService) {
+  constructor(private apiService: ApiService, private cdr: ChangeDetectorRef) {
     addIcons({ trash, add, wallet });
   }
 
-  ngOnInit() {
+  ionViewWillEnter() {
     this.loadInventory();
     this.loadCatalog(); // Para llenar la lista del modal
   }
@@ -44,6 +45,7 @@ export class Tab2Page implements OnInit {
       next: (data) => {
         // Filtrar simulando sesión iniciada
         this.inventoryItems = data.filter(item => item.user_id == this.currentUserId);
+        this.cdr.detectChanges(); // Forzar actualización visual
       },
       error: (err) => console.error('Error cargando inventario', err)
     });
@@ -53,7 +55,6 @@ export class Tab2Page implements OnInit {
     this.apiService.getMarketItems().subscribe({
       next: (data) => {
         this.marketCatalog = data;
-        // Solo mostrar los primeros 20 al abrir para no saturar
         this.filteredCatalog = data.slice(0, 20);
       },
       error: (err) => console.error('Error cargando catálogo', err)
@@ -61,12 +62,17 @@ export class Tab2Page implements OnInit {
   }
 
   filterCatalog(event: any) {
-    const term = event.target.value.toLowerCase();
+    const term = event.target.value.trim();
     if (!term) {
       this.filteredCatalog = this.marketCatalog.slice(0, 20);
       return;
     }
-    this.filteredCatalog = this.marketCatalog.filter(item => item.name.toLowerCase().includes(term)).slice(0, 50);
+    this.apiService.searchMarketItems(term).subscribe({
+      next: (data) => {
+        this.filteredCatalog = data;
+      },
+      error: (err) => console.error('Error buscando', err)
+    });
   }
 
   selectItemForModal(item: MarketItem) {

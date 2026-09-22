@@ -1,0 +1,1 @@
+<?php // Copia este archivo como db_config.php y pon tus credenciales reales. Este archivo SI se sube a git. $host = "localhost"; $db_name = "tu_base_de_datos"; $username = "tu_usuario"; $password = "tu_contraseña"; ?>

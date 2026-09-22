@@ -34,7 +34,7 @@ export class Tab1Page implements OnInit {
   }
 
   filterItems(event: any) {
-    const term = event.target.value.toLowerCase();
+    const term = event.target.value.trim();
     this.searchTerm = term;
     
     if (!term) {
@@ -42,9 +42,11 @@ export class Tab1Page implements OnInit {
       return;
     }
 
-    this.filteredItems = this.marketItems.filter(item => {
-      return item.name.toLowerCase().includes(term) || 
-             (item.collection_name && item.collection_name.toLowerCase().includes(term));
+    this.apiService.searchMarketItems(term).subscribe({
+      next: (data) => {
+        this.filteredItems = data;
+      },
+      error: (err) => console.error('Error buscando items', err)
     });
   }
 

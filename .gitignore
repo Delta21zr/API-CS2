@@ -39,3 +39,6 @@ npm-debug.log*
 .env*
 environments/
 api.php
+
+# Ignorar credenciales de base de datos del backend
+backend/db_config.php
