@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular';
+import { NetworkService } from './services/network.service';
 
 @Component({
   selector: 'app-root',
@@ -8,5 +9,5 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular';
   imports: [IonApp, IonRouterOutlet],
 })
 export class AppComponent {
-  constructor() {}
+  constructor(private networkService: NetworkService) {}
 }

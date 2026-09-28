@@ -7,7 +7,7 @@ import { Router, RouterModule } from '@angular/router';
 import { PaperScope, Path, Group, Color, Point, Size } from 'paper';
 import axios from 'axios';
 import { addIcons } from 'ionicons';
-import { personOutline, lockClosedOutline, skullOutline, shieldHalfOutline, locateOutline } from 'ionicons/icons';
+import { personOutline, lockClosedOutline, skullOutline, shieldHalfOutline, locateOutline, personAddOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-login',
@@ -37,7 +37,7 @@ export class LoginPage implements AfterViewInit {
   canvasMiddleY!: number;
 
   constructor(private router: Router) {
-    addIcons({ personOutline, lockClosedOutline, skullOutline, shieldHalfOutline, locateOutline });
+    addIcons({ personOutline, lockClosedOutline, skullOutline, shieldHalfOutline, locateOutline, personAddOutline });
   }
 
   // ======================
@@ -45,27 +45,53 @@ export class LoginPage implements AfterViewInit {
   // ======================
   async onLogin() {
     try {
-      // Reemplaza con la URL local o pública de tu script PHP
-      const apiUrl = 'http://localhost/tu_proyecto/login.php';
+      const apiUrl = 'http://localhost/login.php';
 
       const response = await axios.post(apiUrl, this.loginData);
 
       if (response.data.success) {
         console.log('Login exitoso:', response.data.message);
+        // Guardar datos del usuario (opcional, ej. en localStorage)
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        
         // Redirigir a las tabs una vez logueado
-        this.router.navigate(['/']);
-      } else {
-        alert('Error: ' + response.data.message);
+        this.router.navigate(['/tabs/tab1']);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error al conectar con la API', error);
-      alert('No se pudo conectar con el servidor.');
+      if (error.response && error.response.data) {
+        alert('Error: ' + error.response.data.message);
+      } else {
+        alert('No se pudo conectar con el servidor.');
+      }
     }
   }
 
-  onSignup() {
-    console.log('Datos listos para registrar:', this.signupData);
-    // Aquí iría tu petición axios.post('.../signup.php', this.signupData)
+  async onSignup() {
+    if (!this.signupData.username || !this.signupData.password || !this.signupData.email) {
+      alert('Por favor completa todos los campos.');
+      return;
+    }
+
+    try {
+      const apiUrl = 'http://localhost/api.php?table=users';
+      
+      const response = await axios.post(apiUrl, {
+        username: this.signupData.username,
+        email: this.signupData.email,
+        password: this.signupData.password
+      });
+
+      if (response.status === 201) {
+        alert('Registro exitoso. Ahora puedes iniciar sesión.');
+        this.goToLogin();
+      } else {
+        alert('Error en el registro.');
+      }
+    } catch (error: any) {
+      console.error('Error en el registro', error);
+      alert('No se pudo registrar el usuario.');
+    }
   }
 
   // ======================

@@ -1,0 +1,58 @@
+<ion-header>
+  <ion-toolbar color="dark">
+    <ion-title>CRUD Usuarios (Admin Panel)</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/tabs/tab1">Volver a App</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding cs2-bg">
+  <h1 style="color: white; text-align: center;">Total usuarios: {{ users.length }}</h1>
+  
+  <ion-list>
+    <ion-item *ngFor="let user of users">
+      <ion-label>
+        <h2 style="color: #e0a96d; font-weight: bold;">{{ user.username }}</h2>
+        <p style="color: white;">{{ user.email }}</p>
+        <p style="color: #aaa;">Registro: {{ user.created_at }}</p>
+      </ion-label>
+      
+      <ion-button slot="end" color="tertiary" (click)="openEditModal(user)">
+        <ion-icon name="create"></ion-icon>
+      </ion-button>
+      <ion-button slot="end" color="danger" (click)="deleteUser(user.id)">
+        <ion-icon name="trash"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+
+  <!-- Modal Edit User -->
+  <ion-modal [isOpen]="isModalOpen" (didDismiss)="closeModal()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Editar Usuario</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeModal()">
+              <ion-icon name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-item>
+          <ion-label position="stacked">Username</ion-label>
+          <ion-input type="text" [(ngModel)]="editData.username"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Email</ion-label>
+          <ion-input type="email" [(ngModel)]="editData.email"></ion-input>
+        </ion-item>
+        <ion-button expand="block" color="success" class="ion-margin-top" (click)="saveEdit()">
+          Guardar Cambios
+        </ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>

@@ -29,6 +29,10 @@ export class Tab4Page implements OnInit {
 
   constructor(private apiService: ApiService) {
     addIcons({ flask, checkmarkCircle, closeCircle });
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      this.currentUserId = JSON.parse(userStr).id;
+    }
   }
 
   ngOnInit() {

@@ -21,5 +21,15 @@
       <ion-label>Contratos</ion-label>
     </ion-tab-button>
 
+    <ion-tab-button tab="admin" href="/tabs/admin" *ngIf="isAdmin">
+      <ion-icon aria-hidden="true" name="settings"></ion-icon>
+      <ion-label>Admin</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button (click)="logout()">
+      <ion-icon aria-hidden="true" name="log-out-outline"></ion-icon>
+      <ion-label>Salir</ion-label>
+    </ion-tab-button>
+
   </ion-tab-bar>
 </ion-tabs>

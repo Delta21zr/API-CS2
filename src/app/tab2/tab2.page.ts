@@ -24,6 +24,14 @@ export class Tab2Page {
   // Usuario simulado (en el futuro vendrá del login)
   currentUserId = 1;
 
+  constructor(private apiService: ApiService, private cdr: ChangeDetectorRef) {
+    addIcons({ trash, add, wallet });
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      this.currentUserId = JSON.parse(userStr).id;
+    }
+  }
+
   newItem: UserInventory = {
     user_id: this.currentUserId,
     item_id: '',
@@ -31,9 +39,7 @@ export class Tab2Page {
     quantity: 1
   };
 
-  constructor(private apiService: ApiService, private cdr: ChangeDetectorRef) {
-    addIcons({ trash, add, wallet });
-  }
+
 
   ionViewWillEnter() {
     this.loadInventory();
@@ -86,6 +92,9 @@ export class Tab2Page {
   addInventoryItem() {
     if (!this.newItem.item_id || this.newItem.purchase_price < 0) return;
     
+    // Asegurarnos de que asigne el ID del usuario actual de la sesión
+    this.newItem.user_id = this.currentUserId;
+
     this.apiService.createInventory(this.newItem).subscribe({
       next: () => {
         this.loadInventory();
