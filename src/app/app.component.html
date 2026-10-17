@@ -1,3 +1,48 @@
 <ion-app>
+  <div
+    id="connection-status-banner"
+    class="network-banner"
+    [class.online]="isOnline && !isSyncing"
+    [class.offline]="!isOnline"
+    [class.syncing]="isSyncing"
+  >
+    <div class="network-banner-left">
+      <span
+        id="connection-status-dot"
+        class="status-dot"
+        [class.dot-online]="isOnline && !isSyncing"
+        [class.dot-offline]="!isOnline"
+        [class.dot-syncing]="isSyncing"
+      ></span>
+      <span id="connection-status-text" class="status-label">
+        {{ isSyncing ? 'Sincronizando datos...' : (isOnline ? 'En línea (Online)' : 'Sin conexión (Modo Offline — Persistencia Local)') }}
+      </span>
+      <span *ngIf="pendingCount > 0" id="pending-sync-badge" class="pending-badge">
+        {{ pendingCount }} pendiente(s)
+      </span>
+    </div>
+
+    <div class="network-banner-actions">
+      <button
+        *ngIf="pendingCount > 0 && isOnline && !isSyncing"
+        id="btn-manual-sync"
+        type="button"
+        class="banner-btn sync-btn"
+        (click)="manualSync()"
+      >
+        Sincronizar ahora
+      </button>
+      <button
+        id="btn-toggle-network"
+        type="button"
+        class="banner-btn toggle-btn"
+        (click)="toggleOfflineSimulation()"
+      >
+        {{ isOnline ? 'Simular Offline' : 'Restaurar Conexión' }}
+      </button>
+    </div>
+  </div>
+
   <ion-router-outlet></ion-router-outlet>
 </ion-app>
+

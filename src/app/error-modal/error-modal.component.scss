@@ -1,0 +1,36 @@
+.error-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.error-item {
+  background: #1e1e1e;
+  padding: 10px;
+  border-radius: 8px;
+  border-left: 4px solid var(--ion-color-danger);
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 5px;
+    font-size: 1rem;
+    color: var(--ion-color-danger);
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    word-break: break-all;
+    color: #fff;
+  }
+
+  pre {
+    margin: 0;
+    background: #121212;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: #fff;
+    overflow-x: auto;
+  }
+}

@@ -1,5 +1,5 @@
 
-import { Component, ElementRef, ViewChild, AfterViewInit, HostListener } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewInit, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonIcon, IonInput, IonButton } from '@ionic/angular';
@@ -7,7 +7,7 @@ import { Router, RouterModule } from '@angular/router';
 import { PaperScope, Path, Group, Color, Point, Size } from 'paper';
 import axios from 'axios';
 import { addIcons } from 'ionicons';
-import { personOutline, lockClosedOutline, skullOutline, shieldHalfOutline, locateOutline, personAddOutline } from 'ionicons/icons';
+import { personOutline, lockClosedOutline, skullOutline, shieldHalfOutline, locateOutline, personAddOutline, serverOutline, informationCircleOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +16,7 @@ import { personOutline, lockClosedOutline, skullOutline, shieldHalfOutline, loca
   standalone: true,
   imports: [IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonIcon, IonInput, IonButton, CommonModule, FormsModule, RouterModule]
 })
-export class LoginPage implements AfterViewInit {
+export class LoginPage implements OnInit, AfterViewInit {
   @ViewChild('canvasElement', { static: true }) canvasElement!: ElementRef<HTMLCanvasElement>;
 
   // Variables de interfaz
@@ -24,6 +24,7 @@ export class LoginPage implements AfterViewInit {
   topLayerMargin: string = '0';
 
   // Variables de Formulario
+  serverIp: string = 'localhost';
   loginData = { username: '', password: '' };
   signupData = { email: '', username: '', password: '' };
 
@@ -37,44 +38,108 @@ export class LoginPage implements AfterViewInit {
   canvasMiddleY!: number;
 
   constructor(private router: Router) {
-    addIcons({ personOutline, lockClosedOutline, skullOutline, shieldHalfOutline, locateOutline, personAddOutline });
+    addIcons({ personOutline, lockClosedOutline, skullOutline, shieldHalfOutline, locateOutline, personAddOutline, serverOutline, informationCircleOutline });
+  }
+
+  loginMessage: string = '';
+  loginSuccess: boolean = false;
+  errorDetails: any = null;
+
+  ngOnInit() {
+    const configStr = localStorage.getItem('serverConfig');
+    if (configStr) {
+      try {
+        const config = JSON.parse(configStr);
+        this.serverIp = `${config.protocol}://${config.ip}${config.port !== '80' && config.port !== '443' ? ':' + config.port : ''}`;
+      } catch(e) {
+        this.serverIp = localStorage.getItem('serverIp') || 'localhost';
+      }
+    } else {
+       this.serverIp = localStorage.getItem('serverIp') || 'localhost';
+    }
+  }
+
+  saveConfig() {
+    let protocol = 'http';
+    let ip = this.serverIp.trim();
+    let port = '80';
+
+    if (ip.startsWith('https://')) {
+      protocol = 'https';
+      ip = ip.replace('https://', '');
+      port = '443';
+    } else if (ip.startsWith('http://')) {
+      protocol = 'http';
+      ip = ip.replace('http://', '');
+    }
+
+    if (ip.includes(':')) {
+      const parts = ip.split(':');
+      ip = parts[0];
+      port = parts[1];
+    }
+    
+    if (ip.includes('/')) {
+        const parts = ip.split('/');
+        ip = parts[0];
+    }
+
+    const config = { protocol, ip, port };
+    localStorage.setItem('serverConfig', JSON.stringify(config));
+    return config;
   }
 
   // ======================
   // Peticiones HTTP con Axios
   // ======================
   async onLogin() {
+    const config = this.saveConfig();
+    this.loginMessage = '';
+    this.errorDetails = null;
+
     try {
-      const apiUrl = 'http://localhost/login.php';
+      const apiUrl = `${config.protocol}://${config.ip}:${config.port}/login.php`;
 
       const response = await axios.post(apiUrl, this.loginData);
 
       if (response.data.success) {
+        this.loginSuccess = true;
+        this.loginMessage = '¡Inicio de sesión exitoso!';
         console.log('Login exitoso:', response.data.message);
-        // Guardar datos del usuario (opcional, ej. en localStorage)
         localStorage.setItem('user', JSON.stringify(response.data.user));
         
-        // Redirigir a las tabs una vez logueado
-        this.router.navigate(['/tabs/tab1']);
+        setTimeout(() => this.router.navigate(['/tabs/tab3']), 1000);
+      } else {
+        this.loginSuccess = false;
+        this.loginMessage = 'Error: ' + response.data.message;
       }
     } catch (error: any) {
+      this.loginSuccess = false;
+      this.loginMessage = 'Error de conexión con la API.';
       console.error('Error al conectar con la API', error);
-      if (error.response && error.response.data) {
-        alert('Error: ' + error.response.data.message);
-      } else {
-        alert('No se pudo conectar con el servidor.');
-      }
+      
+      const config = this.saveConfig();
+      const apiUrl = `${config.protocol}://${config.ip}:${config.port}/login.php`;
+      
+      this.errorDetails = {
+        url: apiUrl,
+        ip: config.ip,
+        status: error.response ? error.response.status : 'Desconectado',
+        headers: error.response ? error.response.headers : {},
+        payload: this.loginData
+      };
     }
   }
 
   async onSignup() {
+    const config = this.saveConfig();
     if (!this.signupData.username || !this.signupData.password || !this.signupData.email) {
       alert('Por favor completa todos los campos.');
       return;
     }
 
     try {
-      const apiUrl = 'http://localhost/api.php?table=users';
+      const apiUrl = `${config.protocol}://${config.ip}:${config.port}/api.php?table=users`;
       
       const response = await axios.post(apiUrl, {
         username: this.signupData.username,
@@ -82,7 +147,7 @@ export class LoginPage implements AfterViewInit {
         password: this.signupData.password
       });
 
-      if (response.status === 201) {
+      if (response.status === 201 || response.data.success) {
         alert('Registro exitoso. Ahora puedes iniciar sesión.');
         this.goToLogin();
       } else {
@@ -90,7 +155,7 @@ export class LoginPage implements AfterViewInit {
       }
     } catch (error: any) {
       console.error('Error en el registro', error);
-      alert('No se pudo registrar el usuario.');
+      alert('No se pudo registrar el usuario. Detalles: ' + (error.message || JSON.stringify(error)));
     }
   }
 

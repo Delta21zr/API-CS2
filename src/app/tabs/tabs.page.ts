@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { cart, briefcase, analytics, flask } from 'ionicons/icons';
+import { cart, briefcase, analytics, flask, globeOutline } from 'ionicons/icons';
 
 import { CommonModule } from '@angular/common';
 import { settings, logOutOutline } from 'ionicons/icons';
@@ -17,7 +17,7 @@ export class TabsPage {
   isAdmin: boolean = false;
 
   constructor() {
-    addIcons({ cart, briefcase, analytics, flask, settings, logOutOutline });
+    addIcons({ cart, briefcase, analytics, flask, settings, logOutOutline, globeOutline });
     this.checkAdminStatus();
   }
 

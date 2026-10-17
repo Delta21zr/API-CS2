@@ -1,0 +1,42 @@
+<ion-header>
+  <ion-toolbar color="danger">
+    <ion-title>Error de API</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeModal()">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="error-container" *ngIf="errorData">
+    <div class="error-item">
+      <h3>Estado</h3>
+      <p>{{ errorData.status }} {{ errorData.statusText }}</p>
+    </div>
+
+    <div class="error-item">
+      <h3>URL</h3>
+      <p>{{ errorData.url }}</p>
+    </div>
+
+    <div class="error-item">
+      <h3>IP de destino</h3>
+      <p>{{ errorData.ip }}</p>
+    </div>
+
+    <div class="error-item">
+      <h3>Headers Enviados</h3>
+      <pre>{{ errorData.headers | json }}</pre>
+    </div>
+
+    <div class="error-item">
+      <h3>Payload (Body)</h3>
+      <pre>{{ errorData.payload | json }}</pre>
+    </div>
+
+    <div class="error-item">
+      <h3>Respuesta del Servidor</h3>
+      <pre>{{ errorData.response | json }}</pre>
+    </div>
+  </div>
+</ion-content>

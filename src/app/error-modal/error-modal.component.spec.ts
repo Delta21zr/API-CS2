@@ -2,19 +2,19 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideIonicAngular } from '@ionic/angular';
 
-import { Tab1Page } from './tab1.page';
+import { ErrorModalComponent } from './error-modal.component';
 
-describe('Tab1Page', () => {
-  let component: Tab1Page;
-  let fixture: ComponentFixture<Tab1Page>;
+describe('ErrorModalComponent', () => {
+  let component: ErrorModalComponent;
+  let fixture: ComponentFixture<ErrorModalComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Tab1Page],
-      providers: [provideZonelessChangeDetection(), provideIonicAngular()],
+      imports: [ErrorModalComponent],
+      providers: [provideZonelessChangeDetection(), provideIonicAngular()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Tab1Page);
+    fixture = TestBed.createComponent(ErrorModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

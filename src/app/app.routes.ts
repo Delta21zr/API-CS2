@@ -15,5 +15,9 @@ export const routes: Routes = [
   {
     path: '', // Se deja vacío porque tabs.routes.ts ya define el prefijo 'tabs'
     loadChildren: () => import('./tabs/tabs.routes').then((m) => m.routes),
+  },
+  {
+    path: 'data-sources',
+    loadComponent: () => import('./data-sources/data-sources.page').then( m => m.DataSourcesPage)
   }
 ];

@@ -7,9 +7,21 @@ import { User, MarketItem, UserInventory, PriceAlert } from '../interfaces/model
   providedIn: 'root'
 })
 export class ApiService {
-  private apiUrl = 'http://localhost/api.php'; 
-
   constructor(private http: HttpClient) {}
+
+  get apiUrl(): string {
+    const configStr = localStorage.getItem('serverConfig');
+    if (configStr) {
+      try {
+        const config = JSON.parse(configStr);
+        return `${config.protocol}://${config.ip}:${config.port}/api.php`;
+      } catch (e) {
+        // Fallback
+      }
+    }
+    const ip = (localStorage.getItem('serverIp') || 'localhost').trim();
+    return `http://${ip}/api.php`;
+  }
 
   // ==========================
   // MÉTODOS GENÉRICOS
