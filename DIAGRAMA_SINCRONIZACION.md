@@ -1,99 +1,98 @@
-# Diagrama del Proceso de Sincronización, Persistencia Local y Manejo Offline/Online
+# Synchronization Process Diagram, Local Persistence, and Offline/Online Handling
 
-Este documento detalla la arquitectura de **Persistencia Local**, **Consulta Remota**, **Manejo de Pérdida y Recuperación de Internet**, **Identificación Visual** y **Sincronización Automática** implementada tanto en la aplicación móvil Ionic/Angular (`teste1`) como en el Dashboard Web/Capacitor (`www/index.html` y `dashboard.html`).
+This document details the architecture for **Local Persistence**, **Remote Querying**, **Internet Loss & Recovery Handling**, **Visual Connection Identification**, and **Automatic Synchronization** implemented in both the Ionic/Angular mobile application (`teste1`) and the Web/Capacitor Dashboard (`www/index.html` and `dashboard.html`).
 
 ---
 
-## 1. Diagrama de Flujo del Proceso de Sincronización
+## 1. Synchronization Process Flowchart
 
 ```mermaid
 flowchart TD
-    A["Acción del Usuario en la App<br/>(Lectura GET o Escritura POST/PUT/DELETE)"] --> B{"¿Estado de Red?<br/>(NetworkService / SyncManager)"}
+    A["User Action in Application<br/>(Read GET or Write POST/PUT/DELETE)"] --> B{"Network Status?<br/>(NetworkService / SyncManager)"}
 
-    %% Ruta Online
-    B -- "🟢 ONLINE (Conectado)" --> C{"Tipo de Operación"}
-    C -- "Lectura (GET)" --> D["Consulta Remota a api.php<br/>(MySQL cs2_tracker)"]
-    D -- "Respuesta 200 OK" --> E["Guardar en Persistencia Local<br/>(CacheService / LocalStorage)"]
-    E --> F["Actualizar marca de tiempo<br/>(lastSyncTime) y Renderizar UI"]
-    D -- "Error de Red (status 0)" --> G["Activar Fallback Offline"]
+    %% Online Path
+    B -- "🟢 ONLINE (Connected)" --> C{"Operation Type"}
+    C -- "Read (GET)" --> D["Remote Query to api.php<br/>(MySQL cs2_tracker)"]
+    D -- "200 OK Response" --> E["Store in Local Persistence<br/>(CacheService / LocalStorage)"]
+    E --> F["Update Timestamp<br/>(lastSyncTime) & Render UI"]
+    D -- "Network Error (status 0)" --> G["Trigger Offline Fallback"]
 
-    C -- "Escritura (POST / PUT / DELETE)" --> H["Enviar cambio a api.php"]
-    H -- "Respuesta 200/201 OK" --> E
-    H -- "Fallo de Red Inesperado" --> I["Encolar en Cola de Sincronización"]
+    C -- "Write (POST / PUT / DELETE)" --> H["Send Mutation to api.php"]
+    H -- "200/201 OK Response" --> E
+    H -- "Unexpected Network Failure" --> I["Enqueue in Sync Queue"]
 
-    %% Ruta Offline
-    B -- "🔴 OFFLINE (Pérdida de Internet)" --> J["Mostrar Banner Visual:<br/>'Sin conexión (Modo Offline)'"]
-    J --> K{"Tipo de Operación"}
+    %% Offline Path
+    B -- "🔴 OFFLINE (No Internet)" --> J["Display Visual Banner:<br/>'Offline Mode — Local Persistence'"]
+    J --> K{"Operation Type"}
     G --> K
-    K -- "Lectura (GET)" --> L["Leer de Persistencia Local<br/>(CacheService / LocalStorage)"]
-    L --> M["Mostrar Datos Cacheados en UI<br/>+ Notificación Modo Offline"]
+    K -- "Read (GET)" --> L["Read from Local Persistence<br/>(CacheService / LocalStorage)"]
+    L --> M["Render Cached Data on UI<br/>+ Offline Mode Notice"]
 
-    K -- "Escritura (POST / PUT / DELETE)" --> I
-    I["Guardar operación en Cola FIFO<br/>(cs2_sync_queue)"] --> N["Aplicar Actualización Optimista<br/>en Caché Local"]
-    N --> O["Actualizar Badge Visual:<br/>'X cambio(s) pendiente(s)'"]
+    K -- "Write (POST / PUT / DELETE)" --> I
+    I["Store Operation in FIFO Queue<br/>(cs2_sync_queue)"] --> N["Apply Optimistic Update<br/>to Local Cache"]
+    N --> O["Update Visual Badge:<br/>'X Pending Change(s)'"]
 
-    %% Recuperación de Conexión
-    O --> P(("⚡ Evento: Recuperación de Conexión<br/>(online / networkStatusChange)"))
-    P --> Q["Cambiar Banner Visual a:<br/>'🔄 Sincronizando datos...'"]
-    Q --> R["SyncService / SyncManager:<br/>Procesar Cola FIFO hacia api.php"]
-    R -- "Éxito en cada operación" --> S["Eliminar operación de la cola<br/>y actualizar lastSyncTime"]
-    S --> T["Cambiar Banner Visual a:<br/>'🟢 En línea (Online)' y Refrescar Datos"]
+    %% Connection Recovery
+    O --> P(("⚡ Event: Connection Restored<br/>(online / networkStatusChange)"))
+    P --> Q["Update Visual Banner to:<br/>'🔄 Syncing data...'"]
+    Q --> R["SyncService / SyncManager:<br/>Process FIFO Queue to api.php"]
+    R -- "Success on each operation" --> S["Remove item from Queue<br/>and update lastSyncTime"]
+    S --> T["Update Visual Banner to:<br/>'🟢 Online' & Refresh UI Data"]
 ```
 
 ---
 
-## 2. Diagrama de Secuencia (Ciclo Completo Offline → Online)
+## 2. Sequence Diagram (Full Offline-First Lifecycle)
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor U as Usuario
-    participant UI as Interfaz Visual (Banner + Vistas)
+    actor U as User
+    participant UI as Visual Interface (Banner + Views)
     participant Net as NetworkService / SyncManager
-    participant Cache as Persistencia Local (Preferences / LocalStorage)
-    participant Sync as Cola de Sincronización (SyncService)
-    participant API as Servidor Remoto (api.php / MySQL)
+    participant Cache as Local Persistence (Preferences / LocalStorage)
+    participant Sync as Sync Queue (SyncService)
+    participant API as Remote Server (api.php / MySQL)
 
-    Note over U,API: Fase 1: Consulta Remota y Persistencia Local (Online)
-    U->>UI: Abre Dashboard / Inventario
+    Note over U,API: Phase 1: Remote Query and Local Persistence (Online)
+    U->>UI: Opens Dashboard / Inventory
     UI->>API: GET api.php?table=market_items
-    API-->>UI: JSON [Lista de Skins y Precios]
-    UI->>Cache: Guarda copia en Persistencia Local + lastSyncTime
-    UI-->>U: Muestra Indicador "🟢 En línea (Online)" y gráficas
+    API-->>UI: JSON [List of Skins & Prices]
+    UI->>Cache: Save snapshot to Local Persistence + lastSyncTime
+    UI-->>U: Display "🟢 Online" indicator & render charts
 
-    Note over U,API: Fase 2: Manejo de Pérdida de Internet
-    Net-->>UI: Evento pérdida de red (offline / networkStatusChange)
-    UI-->>U: Actualiza Banner a "🔴 Sin conexión (Modo Offline)"
+    Note over U,API: Phase 2: Internet Loss Handling & Offline Operations
+    Net-->>UI: Network loss event (offline / networkStatusChange)
+    UI-->>U: Update Banner to "🔴 Offline (Offline Mode — Local Persistence)"
 
-    U->>UI: Consulta vista o agrega/edita un ítem estando Offline
-    UI->>Sync: Encola operación (POST/PUT/DELETE) en cs2_sync_queue
-    Sync->>Cache: Aplica escritura optimista en caché local
-    UI-->>U: Muestra ítem actualizado y badge "1 pendiente de sincronizar"
+    U->>UI: Views list or adds/edits item while Offline
+    UI->>Sync: Enqueue mutation (POST/PUT/DELETE) into cs2_sync_queue
+    Sync->>Cache: Apply optimistic write to local cache
+    UI-->>U: Render updated item + badge "1 pending sync"
 
-    Note over U,API: Fase 3: Recuperación de Conexión y Sincronización Automática
-    Net-->>Sync: Evento conexión restaurada (online)
-    Sync->>UI: Estado "🔄 Sincronizando datos..."
-    loop Por cada operación en Cola FIFO
-        Sync->>API: Envía petición (POST / PUT / DELETE) a api.php
-        API-->>Sync: 200 / 201 OK
-        Sync->>Cache: Remueve operación completada de cs2_sync_queue
+    Note over U,API: Phase 3: Connection Recovery and Automatic Synchronization
+    Net-->>Sync: Network recovered event (online / connectionRecovered$)
+    Sync->>UI: Status "🔄 Syncing data..."
+    loop For each operation in FIFO Queue
+        Sync->>API: Send mutation request (POST / PUT / DELETE) to api.php
+        API-->>Sync: 200 / 201 OK response
+        Sync->>Cache: Remove processed operation from cs2_sync_queue
     end
-    Sync->>Cache: Actualiza lastSyncTime
-    Sync-->>UI: Sincronización completada (0 pendientes)
-    UI-->>U: Banner "🟢 En línea (Online)" + Toast de confirmación
+    Sync->>Cache: Update lastSyncTime timestamp
+    Sync-->>UI: Synchronization completed (0 pending)
+    UI-->>U: Banner "🟢 Online" + confirmation feedback
 ```
 
 ---
 
-## 3. Mapa de Componentes por Proyecto
+## 3. Component Architecture Map by Project
 
-| Requerimiento | Proyecto Ionic/Angular (`c:/test/teste1`) | Dashboard Web/Capacitor (`c:/test/www`) |
+| Requirement | Ionic/Angular Project (`c:/test/teste1`) | Web/Capacitor Dashboard (`c:/test/www`) |
 | :--- | :--- | :--- |
-| **1. Persistencia local** | `src/app/services/cache.service.ts` (`@capacitor/preferences`) | `www/sync-manager.js` (`localStorage` + datos semilla) |
-| **2. Consulta remota** | `src/app/services/api.service.ts` (`HttpClient` hacia `api.php`) | `www/sync-manager.js` (`loadMarketItems` hacia `api.php`) |
-| **3. Sincronización de información** | `src/app/services/sync.service.ts` (`cs2_sync_queue` + `HttpBackend`) | `www/sync-manager.js` (`saveOrQueueMarketItem` + `syncPendingQueue`) |
-| **4. Manejo de pérdida de Internet** | `network.service.ts` (`connectionLost$`) + `offline.interceptor.ts` | `SyncManager.handleConnectionLoss()` + fallback en `loadMarketItems` |
-| **5. Recuperación de conexión** | `network.service.ts` (`connectionRecovered$`) dispara `SyncService` | `SyncManager.handleConnectionRecovery()` dispara `syncPendingQueue()` |
-| **6. Identificación visual offline/online** | `app.component.html` / `app.component.scss` (`#connection-status-banner`) | `www/index.html` y `dashboard.html` (`#net-status-banner` + panel modal `#verification-panel-modal`) |
-| **7. Diagrama de sincronización** | Entregable externo independiente (`DIAGRAMA_SINCRONIZACION.md`) | Entregable externo independiente (`DIAGRAMA_SINCRONIZACION.md`) |
-
+| **1. Local persistence** | `src/app/services/cache.service.ts` (`@capacitor/preferences`) | `www/sync-manager.js` (`localStorage` + seed dataset) |
+| **2. Remote query** | `src/app/services/api.service.ts` (`HttpClient` towards `api.php`) | `www/sync-manager.js` (`loadMarketItems` towards `api.php`) |
+| **3. Information synchronization** | `src/app/services/sync.service.ts` (`cs2_sync_queue` + `HttpBackend`) | `www/sync-manager.js` (`saveOrQueueMarketItem` + `syncPendingQueue`) |
+| **4. Internet loss handling** | `network.service.ts` (`connectionLost$`) + `offline.interceptor.ts` | `SyncManager.handleConnectionLoss()` + fallback in `loadMarketItems` |
+| **5. Connection recovery** | `network.service.ts` (`connectionRecovered$`) triggers `SyncService` | `SyncManager.handleConnectionRecovery()` triggers `syncPendingQueue()` |
+| **6. Visual offline/online status** | `app.component.html` / `app.component.scss` (`#connection-status-banner`) | `www/index.html` & `dashboard.html` (`#net-status-banner` + `#verification-panel-modal`) |
+| **7. Synchronization diagram** | Standalone deliverable document (`DIAGRAMA_SINCRONIZACION.md`) | Standalone deliverable document (`DIAGRAMA_SINCRONIZACION.md`) |
