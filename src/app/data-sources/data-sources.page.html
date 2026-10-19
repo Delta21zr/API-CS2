@@ -1,73 +1,80 @@
-<ion-header>
-  <ion-toolbar color="dark">
+<ion-header [translucent]="true">
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/"></ion-back-button>
     </ion-buttons>
-    <ion-title>Orígenes de Datos y Sincronización</ion-title>
+    <ion-title>ORÍGENES DE DATOS Y SINCRONIZACIÓN</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding" color="dark">
-  <ion-card *ngIf="serverConfig">
-    <ion-card-header>
-      <ion-card-title>Configuración de API Remota</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-list lines="full">
-        <ion-item>
-          <ion-label><h3>Protocolo</h3></ion-label>
-          <ion-note slot="end">{{ serverConfig.protocol }}</ion-note>
-        </ion-item>
-        <ion-item>
-          <ion-label><h3>IP / Dominio</h3></ion-label>
-          <ion-note slot="end">{{ serverConfig.ip }}</ion-note>
-        </ion-item>
-        <ion-item>
-          <ion-label><h3>Puerto</h3></ion-label>
-          <ion-note slot="end">{{ serverConfig.port }}</ion-note>
-        </ion-item>
-      </ion-list>
-    </ion-card-content>
-  </ion-card>
+<ion-content class="ion-padding cs2-bg">
+  <div class="sources-wrapper">
 
-  <ion-card *ngIf="!serverConfig">
-    <ion-card-content>
-      No se ha encontrado ninguna configuración de servidor. Por favor, inicia sesión primero.
-    </ion-card-content>
-  </ion-card>
+    <ion-card *ngIf="serverConfig" class="cs-item-card">
+      <ion-card-header>
+        <span class="card-eyebrow">TELEMETRÍA DE RED</span>
+        <ion-card-title>Configuración de API Remota</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="info-row">
+          <span class="info-key">Protocolo</span>
+          <span class="info-val mono">{{ serverConfig.protocol }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">IP / Dominio</span>
+          <span class="info-val mono">{{ serverConfig.ip }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">Puerto</span>
+          <span class="info-val mono">{{ serverConfig.port }}</span>
+        </div>
+      </ion-card-content>
+    </ion-card>
 
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Estado de Persistencia Local y Red</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-list lines="full">
-        <ion-item>
-          <ion-label><h3>Estado de Conexión</h3></ion-label>
-          <ion-badge slot="end" [color]="isOnline ? 'success' : 'danger'">
+    <ion-card *ngIf="!serverConfig" class="cs-item-card">
+      <ion-card-content class="empty-config-msg">
+        No se ha encontrado ninguna configuración de servidor. Por favor, inicia sesión primero.
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card class="cs-item-card">
+      <ion-card-header>
+        <span class="card-eyebrow">MOTOR OFFLINE-FIRST</span>
+        <ion-card-title>Estado de Persistencia Local y Red</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="info-row">
+          <span class="info-key">Estado de Conexión</span>
+          <ion-badge [color]="isOnline ? 'success' : 'danger'">
             {{ isOnline ? 'ONLINE' : 'OFFLINE' }}
           </ion-badge>
-        </ion-item>
-        <ion-item>
-          <ion-label><h3>Motor de Persistencia</h3></ion-label>
-          <ion-note slot="end">Capacitor Preferences + LocalStorage</ion-note>
-        </ion-item>
-        <ion-item>
-          <ion-label><h3>Operaciones en Cola (Offline)</h3></ion-label>
-          <ion-badge slot="end" [color]="pendingCount > 0 ? 'warning' : 'medium'">
+        </div>
+        <div class="info-row">
+          <span class="info-key">Motor de Persistencia</span>
+          <span class="info-val">Capacitor Preferences + LocalStorage</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">Operaciones en Cola (Offline)</span>
+          <ion-badge [color]="pendingCount > 0 ? 'warning' : 'medium'">
             {{ pendingCount }}
           </ion-badge>
-        </ion-item>
-        <ion-item>
-          <ion-label><h3>Última Sincronización</h3></ion-label>
-          <ion-note slot="end">{{ lastSyncTime ? (lastSyncTime | date:'short') : 'Pendiente' }}</ion-note>
-        </ion-item>
-      </ion-list>
-      <ion-button expand="block" *ngIf="pendingCount > 0 && isOnline" (click)="syncNow()" class="ion-margin-top">
-        Sincronizar Ahora ({{ pendingCount }})
-      </ion-button>
-    </ion-card-content>
-  </ion-card>
+        </div>
+        <div class="info-row">
+          <span class="info-key">Última Sincronización</span>
+          <span class="info-val mono">{{ lastSyncTime ? (lastSyncTime | date:'short') : 'Pendiente' }}</span>
+        </div>
+
+        <ion-button
+          expand="block"
+          color="warning"
+          *ngIf="pendingCount > 0 && isOnline"
+          (click)="syncNow()"
+          class="ion-margin-top"
+        >
+          Sincronizar Ahora ({{ pendingCount }})
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+  </div>
 </ion-content>
-
-

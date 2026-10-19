@@ -1,19 +1,85 @@
-.cs2-bg {
-  --background: #1e1e1e;
-  --color: white;
+.admin-wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 12px 4px 36px;
 }
-ion-item {
-  --background: #2b2b2b;
-  --color: white;
-  margin-bottom: 10px;
-  border-radius: 8px;
+
+.admin-kpi {
+  padding: 18px 22px;
+  margin-bottom: 20px;
+
+  .admin-eyebrow {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #f59e0b;
+  }
+
+  h1 {
+    margin: 4px 0 0;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #f8fafc;
+  }
 }
-ion-list {
-  background: transparent;
+
+.user-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 14px;
 }
-h2 {
-  color: #e0a96d;
+
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  margin: 0;
 }
-p {
-  color: #aaa;
+
+.user-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(56, 189, 248, 0.2));
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #fbbf24;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.user-info {
+  flex: 1;
+  min-width: 0;
+
+  h2 {
+    margin: 0 0 2px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #f8fafc;
+  }
+
+  .user-email {
+    margin: 0 0 2px;
+    font-size: 0.82rem;
+    color: #38bdf8;
+  }
+
+  .user-date {
+    margin: 0;
+    font-size: 0.72rem;
+    color: #64748b;
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+.user-actions {
+  display: flex;
+  gap: 6px;
 }

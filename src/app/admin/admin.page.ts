@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem, IonLabel, IonButton, IonIcon, IonModal, IonInput, IonButtons } from '@ionic/angular';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonButton, IonIcon, IonModal, IonInput, IonButtons, IonCard, IonCardContent } from '@ionic/angular';
 import { ApiService } from '../services/api.service';
 import { User } from '../interfaces/models';
 import { addIcons } from 'ionicons';
@@ -13,7 +13,7 @@ import { RouterModule } from '@angular/router';
   templateUrl: './admin.page.html',
   styleUrls: ['./admin.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem, IonLabel, IonButton, IonIcon, IonModal, IonInput, IonButtons, CommonModule, FormsModule, RouterModule]
+  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonButton, IonIcon, IonModal, IonInput, IonButtons, IonCard, IonCardContent, CommonModule, FormsModule, RouterModule]
 })
 export class AdminPage implements OnInit {
   users: User[] = [];

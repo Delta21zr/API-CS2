@@ -7,26 +7,29 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 14px;
-  font-size: 12px;
+  padding: 6px 16px;
+  font-size: 11.5px;
   font-weight: 600;
-  color: #ffffff;
-  transition: background-color 0.25s ease, border-color 0.25s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  letter-spacing: 0.02em;
+  color: #f8fafc;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
 
   &.online {
-    background: rgba(23, 43, 32, 0.95);
-    border-bottom: 1px solid #2e7d32;
+    background: rgba(11, 14, 20, 0.92);
+    border-bottom: 1px solid rgba(16, 185, 129, 0.35);
   }
 
   &.offline {
-    background: rgba(88, 21, 28, 0.96);
-    border-bottom: 1px solid #ef5350;
+    background: rgba(69, 10, 20, 0.94);
+    border-bottom: 1px solid rgba(244, 63, 94, 0.55);
   }
 
   &.syncing {
-    background: rgba(19, 49, 75, 0.96);
-    border-bottom: 1px solid #42a5f5;
+    background: rgba(12, 34, 58, 0.94);
+    border-bottom: 1px solid rgba(56, 189, 248, 0.55);
   }
 }
 
@@ -38,71 +41,87 @@
 }
 
 .status-dot {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   display: inline-block;
 
   &.dot-online {
-    background-color: #4caf50;
-    box-shadow: 0 0 6px #4caf50;
+    background-color: #10b981;
+    box-shadow: 0 0 8px #10b981;
   }
 
   &.dot-offline {
-    background-color: #ff5252;
-    box-shadow: 0 0 6px #ff5252;
+    background-color: #f43f5e;
+    box-shadow: 0 0 8px #f43f5e;
   }
 
   &.dot-syncing {
-    background-color: #29b6f6;
-    box-shadow: 0 0 6px #29b6f6;
+    background-color: #38bdf8;
+    box-shadow: 0 0 8px #38bdf8;
     animation: sync-pulse 0.9s infinite alternate;
   }
 }
 
 @keyframes sync-pulse {
   from {
-    opacity: 0.4;
+    opacity: 0.35;
+    transform: scale(0.9);
   }
   to {
     opacity: 1;
+    transform: scale(1.15);
   }
 }
 
 .pending-badge {
-  background: #ffb300;
-  color: #111;
-  padding: 2px 7px;
-  border-radius: 10px;
-  font-size: 11px;
+  background: rgba(245, 158, 11, 0.2);
+  border: 1px solid rgba(245, 158, 11, 0.5);
+  color: #fbbf24;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10.5px;
   font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .network-banner-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .banner-btn {
-  border: none;
-  border-radius: 4px;
-  padding: 4px 8px;
+  border-radius: 6px;
+  padding: 4px 10px;
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s ease;
 
   &.sync-btn {
-    background: #66c0f4;
-    color: #171a21;
+    background: linear-gradient(135deg, #38bdf8, #0284c7);
+    border: 1px solid rgba(56, 189, 248, 0.5);
+    color: #0b0e14;
+    font-weight: 700;
+
+    &:hover {
+      filter: brightness(1.1);
+    }
   }
 
   &.toggle-btn {
-    background: rgba(255, 255, 255, 0.15);
-    color: #fff;
+    background: rgba(30, 41, 59, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: #e2e8f0;
+
+    &:hover {
+      border-color: rgba(245, 158, 11, 0.45);
+      color: #fbbf24;
+    }
   }
 }
 
 ion-router-outlet {
-  margin-top: 32px;
+  margin-top: 34px;
 }

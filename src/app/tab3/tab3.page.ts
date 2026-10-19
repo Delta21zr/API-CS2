@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonToolbar, IonTitle, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCardContent, IonIcon, IonItem, IonSpinner, IonSearchbar, IonList, IonThumbnail, IonLabel, IonSegment, IonSegmentButton } from '@ionic/angular';
+import { IonContent, IonHeader, IonToolbar, IonTitle, IonCard, IonCardContent, IonIcon, IonSpinner, IonSearchbar, IonLabel, IonSegment, IonSegmentButton } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { trendingUp, trendingDown, analytics, search } from 'ionicons/icons';
 import { ApiService } from '../services/api.service';
@@ -16,7 +16,7 @@ import { ChangeDetectorRef } from '@angular/core';
   templateUrl: './tab3.page.html',
   styleUrls: ['./tab3.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonToolbar, IonTitle, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCardContent, IonIcon, IonItem, IonSpinner, IonSearchbar, IonList, IonThumbnail, IonLabel, IonSegment, IonSegmentButton, CommonModule, FormsModule, BaseChartDirective]
+  imports: [IonContent, IonHeader, IonToolbar, IonTitle, IonCard, IonCardContent, IonIcon, IonSpinner, IonSearchbar, IonLabel, IonSegment, IonSegmentButton, CommonModule, FormsModule, BaseChartDirective]
 })
 export class Tab3Page implements OnInit {
   marketCatalog: MarketItem[] = [];
@@ -127,11 +127,14 @@ export class Tab3Page implements OnInit {
       datasets: [
         {
           data: prices,
-          label: 'Precio ($)',
-          backgroundColor: 'rgba(76, 175, 80, 0.2)',
-          borderColor: 'rgba(76, 175, 80, 1)',
-          pointRadius: prices.length === 1 ? 5 : 0, // <-- Muestra el punto si solo hay 1 dato
+          label: 'Precio ($ USD)',
+          backgroundColor: 'rgba(56, 189, 248, 0.18)',
+          borderColor: '#38bdf8',
+          pointBackgroundColor: '#f59e0b',
+          pointBorderColor: '#0b0e14',
+          pointRadius: prices.length === 1 ? 5 : 2,
           pointHoverRadius: 6,
+          tension: 0.3,
           fill: 'origin',
         }
       ],

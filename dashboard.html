@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS2 Market Pro — Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: #0b0e14;
+            background-image:
+                radial-gradient(circle at 12% 10%, rgba(255, 153, 0, 0.09), transparent 32%),
+                radial-gradient(circle at 88% 15%, rgba(102, 192, 244, 0.09), transparent 35%);
+            color: #e2e8f0;
+            margin: 0;
+            min-height: 100vh;
+        }
+        .font-tactical { font-family: 'Rajdhani', sans-serif; letter-spacing: 0.04em; }
+        .font-mono-code { font-family: 'JetBrains Mono', monospace; }
+        .card {
+            background: rgba(19, 25, 36, 0.78);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 22px;
+            box-shadow: 0 12px 32px -8px rgba(0,0,0,0.6);
+        }
+        .net-top-banner {
+            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+            gap: 10px; padding: 10px 24px; background: rgba(13, 18, 26, 0.88);
+            backdrop-filter: blur(14px); border-bottom: 1px solid rgba(76, 175, 80, 0.35);
+            position: sticky; top: 0; z-index: 50;
+        }
+        .net-top-banner.offline { background: rgba(45, 14, 18, 0.92); border-bottom-color: rgba(239, 83, 80, 0.6); }
+        .net-top-banner.syncing { background: rgba(14, 34, 56, 0.92); border-bottom-color: rgba(66, 165, 245, 0.6); }
+        .net-banner-info { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        .status-dot.disconnected { background: #ef4444; box-shadow: 0 0 10px #ef4444; }
+        .status-dot.scanning { background: #f59e0b; box-shadow: 0 0 10px #f59e0b; }
+        .status-dot.connected { background: #22c55e; box-shadow: 0 0 10px #22c55e; }
+        .sync-badge { background: linear-gradient(135deg, #f59e0b, #d97706); color: #0b0e14; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+        .source-badge { background: rgba(102, 192, 244, 0.12); border: 1px solid rgba(102, 192, 244, 0.3); color: #66c0f4; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+        .btn { padding: 8px 14px; border: 1px solid transparent; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; }
+        .btn-primary { background: linear-gradient(135deg, #ff9900, #e67300); color: #0b0e14; }
+        .btn-secondary { background: rgba(30, 41, 59, 0.8); border-color: rgba(255, 255, 255, 0.1); color: #cbd5e1; }
+        .axis text { fill: #94a3b8; font-size: 11px; }
+        .axis path, .axis line { stroke: rgba(148, 163, 184, 0.18); }
+        .tooltip {
+            position: absolute; padding: 12px 14px; font-size: 12px; background: rgba(11, 14, 20, 0.95);
+            color: white; border: 1px solid rgba(255, 153, 0, 0.5); border-radius: 10px;
+            pointer-events: none; opacity: 0; box-shadow: 0 10px 25px rgba(0,0,0,0.65); z-index: 100;
+        }
+        svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+    </style>
+</head>
+<body>
+
+    <div id="net-status-banner" class="net-top-banner">
+        <div class="net-banner-info">
+            <span class="font-tactical text-lg font-bold text-white mr-2">CS2 <span class="text-amber-400">MARKET PRO</span></span>
+            <span id="net-status-dot" class="status-dot connected"></span>
+            <span id="net-status-label" class="text-xs font-semibold uppercase text-emerald-300">En línea (Online)</span>
+            <span id="net-data-source" class="source-badge">Origen: Consulta Remota</span>
+            <span id="net-pending-badge" class="sync-badge" style="display: none;">0 pendientes</span>
+        </div>
+        <div class="flex gap-2">
+            <button class="btn btn-primary" onclick="SyncManager.syncPendingQueue().then(() => reloadDashboardData())">🔄 Sincronizar</button>
+            <button id="btn-simulate-net" class="btn btn-secondary" onclick="toggleSimulateNetwork()">⚡ Simular Pérdida de Internet</button>
+        </div>
+    </div>
+
+    <main class="max-w-[1440px] mx-auto px-6 py-6">
+        <h1 class="font-tactical text-3xl font-bold text-white mb-6">PANEL DE ANÁLISIS DE MERCADO <span class="text-amber-400">CS2</span></h1>
+
+        <div class="dashboard grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="card lg:col-span-7">
+                <h3 class="font-tactical text-xl font-bold text-white mt-0 mb-3">🔥 Top 10 Skins Más Caras</h3>
+                <div id="bar-chart"></div>
+            </div>
+
+            <div class="card lg:col-span-5">
+                <h3 class="font-tactical text-xl font-bold text-white mt-0 mb-3">🎨 Distribución por Rareza</h3>
+                <div id="donut-chart"></div>
+            </div>
+
+            <div class="card lg:col-span-12">
+                <h3 class="font-tactical text-xl font-bold text-white mt-0 mb-3">⚡ Precio Promedio por Desgaste</h3>
+                <div id="lollipop-chart"></div>
+            </div>
+        </div>
+    </main>
+
+    <div id="tooltip" class="tooltip"></div>
+
+    <script src="www/sync-manager.js"></script>
+    <script>
+        const tooltip = d3.select("#tooltip");
+
+        function updateNetworkUI(state) {
+            const banner = document.getElementById("net-status-banner");
+            const dot = document.getElementById("net-status-dot");
+            const label = document.getElementById("net-status-label");
+            const pendingBadge = document.getElementById("net-pending-badge");
+            const simBtn = document.getElementById("btn-simulate-net");
+
+            if (state.isSyncing) {
+                banner.className = "net-top-banner syncing";
+                dot.className = "status-dot scanning";
+                label.innerText = "Sincronizando datos...";
+            } else if (state.isOnline) {
+                banner.className = "net-top-banner";
+                dot.className = "status-dot connected";
+                label.innerText = "En línea (Online)";
+                simBtn.innerText = "⚡ Simular Pérdida de Internet";
+            } else {
+                banner.className = "net-top-banner offline";
+                dot.className = "status-dot disconnected";
+                label.innerText = "Sin conexión (Modo Offline)";
+                simBtn.innerText = "🔌 Restaurar Conexión";
+            }
+
+            if (state.pendingCount > 0) {
+                pendingBadge.style.display = "inline-block";
+                pendingBadge.innerText = `${state.pendingCount} pendiente(s)`;
+            } else {
+                pendingBadge.style.display = "none";
+            }
+        }
+
+        function renderAllCharts(rawData) {
+            const data = rawData.map(d => ({
+                ...d,
+                current_price: +d.current_price || 0,
+                rarity: d.rarity || 'Desconocido',
+                exterior: d.exterior || 'Sin Desgaste'
+            }));
+            d3.select("#bar-chart").selectAll("*").remove();
+            d3.select("#donut-chart").selectAll("*").remove();
+            d3.select("#lollipop-chart").selectAll("*").remove();
+            drawBarChart(data);
+            drawDonutChart(data);
+            drawLollipopChart(data);
+        }
+
+        async function reloadDashboardData() {
+            const res = await SyncManager.loadMarketItems('api.php?table=market_items');
+            document.getElementById("net-data-source").innerText =
+                res.source === 'remote' ? 'Origen: Consulta Remota' : 'Origen: Persistencia Local';
+            renderAllCharts(res.data);
+        }
+
+        async function toggleSimulateNetwork() {
+            if (SyncManager.isOnline) {
+                SyncManager.handleConnectionLoss();
+                document.getElementById("net-data-source").innerText = "Origen: Persistencia Local";
+                renderAllCharts(SyncManager.getLocalCache() || SyncManager.DEFAULT_FALLBACK_ITEMS);
+            } else {
+                await SyncManager.handleConnectionRecovery();
+                await reloadDashboardData();
+            }
+        }
+
+        SyncManager.init(updateNetworkUI);
+        reloadDashboardData();
+
+        function drawBarChart(data) {
+            let top10 = [...data].sort((a, b) => b.current_price - a.current_price).slice(0, 10);
+            const margin = {top: 20, right: 30, bottom: 90, left: 60},
+                  width = 600 - margin.left - margin.right,
+                  height = 380 - margin.top - margin.bottom;
+
+            const svg = d3.select("#bar-chart")
+              .append("svg")
+                .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+              .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+
+            const x = d3.scaleBand().domain(top10.map(d => d.item_id)).range([0, width]).padding(0.25);
+            svg.append("g").attr("transform", `translate(0, ${height})`).call(d3.axisBottom(x)).attr("class", "axis")
+              .selectAll("text").attr("transform", "translate(-10,0)rotate(-40)").style("text-anchor", "end")
+              .text(d => d.length > 16 ? d.substring(0, 16) + "…" : d);
+
+            const y = d3.scaleLinear().domain([0, (d3.max(top10, d => d.current_price) || 100) * 1.1]).range([height, 0]);
+            svg.append("g").call(d3.axisLeft(y).tickFormat(d => "$" + d)).attr("class", "axis");
+
+            svg.selectAll("mybar").data(top10).enter().append("rect")
+                .attr("x", d => x(d.item_id)).attr("y", d => y(d.current_price))
+                .attr("rx", 6).attr("width", x.bandwidth()).attr("height", d => height - y(d.current_price))
+                .attr("fill", "#ff9900");
+        }
+
+        function drawDonutChart(data) {
+            let counts = {};
+            data.forEach(d => { if (d.rarity !== 'Desconocido') counts[d.rarity] = (counts[d.rarity] || 0) + 1; });
+            let donutData = Object.keys(counts).map(k => ({ rarity: k, count: counts[k] }));
+            const width = 380, height = 360, radius = Math.min(width, height) / 2 - 20;
+            const svg = d3.select("#donut-chart").append("svg").attr("viewBox", `0 0 ${width} ${height}`)
+              .append("g").attr("transform", `translate(${width/2},${height/2})`);
+            const colorScale = d3.scaleOrdinal()
+              .domain(["Consumer Grade", "Industrial Grade", "Mil-Spec Grade", "Restricted", "Classified", "Covert", "Extraordinary", "Contraband"])
+              .range(["#b0c3d9", "#5e98d9", "#4b69ff", "#8847ff", "#d32ce6", "#eb4b4b", "#f59e0b", "#ff9900"]);
+            const pie = d3.pie().value(d => d.count).padAngle(0.02).sort(null);
+            const arc = d3.arc().innerRadius(radius * 0.58).outerRadius(radius * 0.85).cornerRadius(6);
+            svg.selectAll("allSlices").data(pie(donutData)).enter().append("path")
+              .attr("d", arc).attr("fill", d => colorScale(d.data.rarity) || "#777");
+        }
+
+        function drawLollipopChart(data) {
+            const validExteriors = ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"];
+            let grouped = {};
+            data.forEach(d => {
+                if (validExteriors.includes(d.exterior) && d.current_price > 0) {
+                    if (!grouped[d.exterior]) grouped[d.exterior] = { sum: 0, count: 0 };
+                    grouped[d.exterior].sum += d.current_price;
+                    grouped[d.exterior].count += 1;
+                }
+            });
+            let lollipopData = validExteriors.map(ext => ({
+                exterior: ext,
+                avgPrice: grouped[ext] ? (grouped[ext].sum / grouped[ext].count) : 0
+            })).filter(d => d.avgPrice > 0);
+            const margin = {top: 20, right: 30, bottom: 60, left: 60}, width = 600 - margin.left - margin.right, height = 320 - margin.top - margin.bottom;
+            const svg = d3.select("#lollipop-chart").append("svg").attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+              .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+            const x = d3.scaleBand().range([0, width]).domain(lollipopData.map(d => d.exterior)).padding(1);
+            svg.append("g").attr("transform", `translate(0, ${height})`).call(d3.axisBottom(x)).attr("class", "axis");
+            const y = d3.scaleLinear().domain([0, (d3.max(lollipopData, d => d.avgPrice) || 100) * 1.1]).range([height, 0]);
+            svg.append("g").call(d3.axisLeft(y).tickFormat(d => "$" + d)).attr("class", "axis");
+            svg.selectAll("myline").data(lollipopData).enter().append("line")
+              .attr("x1", d => x(d.exterior)).attr("x2", d => x(d.exterior)).attr("y1", d => y(d.avgPrice)).attr("y2", y(0)).attr("stroke", "#38bdf8").attr("stroke-width", "3px");
+            svg.selectAll("mycircle").data(lollipopData).enter().append("circle")
+              .attr("cx", d => x(d.exterior)).attr("cy", d => y(d.avgPrice)).attr("r", "8").style("fill", "#38bdf8");
+        }
+    </script>
+</body>
+</html>

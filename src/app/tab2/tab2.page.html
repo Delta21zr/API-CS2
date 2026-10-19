@@ -1,112 +1,192 @@
 <ion-header [translucent]="true">
-  <ion-toolbar color="dark">
-    <ion-title>Mi Inventario</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="setOpen(true)" color="success">
-        <ion-icon name="add" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
+  <ion-toolbar>
+    <div class="header-container">
+      <div class="brand-badge">
+        <span class="brand-dot"></span>
+        <div>
+          <div class="brand-subtitle">PORTAFOLIO CS2</div>
+          <ion-title class="brand-title">MI INVENTARIO</ion-title>
+        </div>
+      </div>
+
+      <ion-buttons slot="end">
+        <button class="btn-add-purchase" (click)="setOpen(true)">
+          <ion-icon name="add"></ion-icon>
+          <span>Registrar Compra</span>
+        </button>
+      </ion-buttons>
+    </div>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="cs2-bg">
-  <ion-header collapse="condense">
-    <ion-toolbar color="dark">
-      <ion-title size="large">Mi Inventario</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="page-wrapper">
 
-  <!-- Resumen de Profit -->
-  <ion-card class="cs-item-card" style="margin-top: 15px;">
-    <ion-card-header>
-      <ion-card-subtitle>Resumen Financiero</ion-card-subtitle>
-      <ion-card-title>
-        Valor Total: ${{ calculateTotalValue() | number:'1.2-2' }}
-      </ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <p style="color: #bbb;">Total Invertido: ${{ calculateTotalSpent() | number:'1.2-2' }}</p>
-      <h2 [ngStyle]="{'color': calculateTotalProfit() >= 0 ? '#4CAF50' : '#F44336'}" style="font-weight: bold;">
-        Profit: ${{ calculateTotalProfit() | number:'1.2-2' }}
-      </h2>
-    </ion-card-content>
-  </ion-card>
+    <!-- 3 KPI Financial Cards -->
+    <div class="kpi-grid">
+      <div class="kpi-card kpi-amber">
+        <div class="kpi-header">
+          <span class="kpi-label">VALOR DE MERCADO</span>
+          <span class="kpi-tag tag-amber">{{ inventoryItems.length }} Skins</span>
+        </div>
+        <div class="kpi-value">
+          ${{ calculateTotalValue() | number:'1.2-2' }} <span class="kpi-currency">USD</span>
+        </div>
+        <div class="kpi-footer">Cotización actual Steam</div>
+      </div>
 
-  <!-- Lista del Inventario -->
-  <div *ngIf="inventoryItems.length === 0" class="ion-text-center ion-padding" style="color: white;">
-    <p>Tu inventario está vacío. Toca el botón + para registrar una compra.</p>
+      <div class="kpi-card kpi-cyan">
+        <div class="kpi-header">
+          <span class="kpi-label">CAPITAL INVERTIDO</span>
+          <span class="kpi-tag tag-cyan">Costo Base</span>
+        </div>
+        <div class="kpi-value">
+          ${{ calculateTotalSpent() | number:'1.2-2' }} <span class="kpi-currency">USD</span>
+        </div>
+        <div class="kpi-footer">Total compras acumuladas</div>
+      </div>
+
+      <div class="kpi-card" [ngClass]="calculateTotalProfit() >= 0 ? 'kpi-emerald' : 'kpi-rose'">
+        <div class="kpi-header">
+          <span class="kpi-label">PROFIT / RENDIMIENTO</span>
+          <span class="kpi-tag" [ngClass]="calculateTotalProfit() >= 0 ? 'tag-emerald' : 'tag-rose'">
+            {{ calculateTotalProfit() >= 0 ? 'GANANCIA' : 'PÉRDIDA' }}
+          </span>
+        </div>
+        <div class="kpi-value" [ngClass]="calculateTotalProfit() >= 0 ? 'text-profit' : 'text-loss'">
+          {{ calculateTotalProfit() >= 0 ? '+' : '' }}${{ calculateTotalProfit() | number:'1.2-2' }}
+        </div>
+        <div class="kpi-footer">Balance neto en tiempo real</div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="inventoryItems.length === 0" class="empty-vault-card cs-item-card">
+      <div class="empty-icon-ring">
+        <ion-icon name="wallet"></ion-icon>
+      </div>
+      <h3>Tu bóveda de skins está vacía</h3>
+      <p>Registra tus compras de CS2 para monitorear el valor de mercado y calcular tu ganancia neta automáticamente.</p>
+      <button class="btn-add-purchase-lg" (click)="setOpen(true)">
+        <ion-icon name="add"></ion-icon>
+        Agregar Primera Skin
+      </button>
+    </div>
+
+    <!-- Inventory Weapon Cards Grid -->
+    <div class="section-heading" *ngIf="inventoryItems.length > 0">
+      <h2>ACTIVOS EN PORTAFOLIO</h2>
+      <span class="section-count">{{ inventoryItems.length }} artículos</span>
+    </div>
+
+    <div class="inventory-grid" *ngIf="inventoryItems.length > 0">
+      <div *ngFor="let item of inventoryItems" class="weapon-vault-card cs-item-card">
+        <div class="weapon-thumb-box">
+          <img [src]="item.image_url" [alt]="item.name" />
+        </div>
+
+        <div class="weapon-details">
+          <div class="weapon-top-row">
+            <span class="exterior-pill">{{ item.exterior || 'Standard' }}</span>
+            <span
+              class="profit-pill"
+              [ngClass]="((item.current_price || 0) - item.purchase_price) >= 0 ? 'pill-up' : 'pill-down'"
+            >
+              {{ ((item.current_price || 0) - item.purchase_price) >= 0 ? '+' : '' }}${{ ((item.current_price || 0) - item.purchase_price) | number:'1.2-2' }}
+            </span>
+          </div>
+
+          <h3 class="weapon-title">{{ item.name }}</h3>
+
+          <div class="weapon-metrics">
+            <div class="metric-block">
+              <span class="metric-label">PRECIO ACTUAL</span>
+              <span class="metric-val current">${{ item.current_price | number:'1.2-2' }}</span>
+            </div>
+            <div class="metric-divider"></div>
+            <div class="metric-block">
+              <span class="metric-label">COMPRADO A</span>
+              <span class="metric-val bought">${{ item.purchase_price | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-delete-skin" (click)="deleteInventoryItem(item.id)" title="Eliminar del inventario">
+          <ion-icon name="trash"></ion-icon>
+        </button>
+      </div>
+    </div>
+
   </div>
 
-  <ion-list class="inventory-list" *ngIf="inventoryItems.length > 0">
-    <ion-item *ngFor="let item of inventoryItems" class="cs-item">
-      <ion-thumbnail slot="start">
-        <img [src]="item.image_url" alt="{{ item.name }}" />
-      </ion-thumbnail>
-      <ion-label>
-        <h2>{{ item.name }}</h2>
-        <p style="color: #999;">{{ item.exterior }}</p>
-        <!-- Profit individual -->
-        <p [ngStyle]="{'color': (item.current_price! - item.purchase_price) >= 0 ? '#4CAF50' : '#F44336'}">
-          Profit: ${{ (item.current_price! - item.purchase_price) | number:'1.2-2' }}
-        </p>
-      </ion-label>
-      <div class="price-info" slot="end" class="ion-text-right">
-        <h3 class="current-price">Actual: ${{ item.current_price }}</h3>
-        <span class="buy-price" style="display:block; color:#888; font-size: 0.8rem;">Comprado: ${{ item.purchase_price }}</span>
-      </div>
-      <ion-buttons slot="end">
-        <ion-button color="danger" (click)="deleteInventoryItem(item.id)">
-          <ion-icon name="trash"></ion-icon>
-        </ion-button>
-      </ion-buttons>
-    </ion-item>
-  </ion-list>
-
   <!-- Modal para Agregar Arma al Inventario -->
-  <ion-modal [isOpen]="isModalOpen">
+  <ion-modal [isOpen]="isModalOpen" (didDismiss)="setOpen(false)">
     <ng-template>
       <ion-header>
-        <ion-toolbar color="dark">
-          <ion-title>Registrar Compra</ion-title>
+        <ion-toolbar>
+          <ion-title>REGISTRAR COMPRA</ion-title>
           <ion-buttons slot="end">
-            <ion-button (click)="setOpen(false)">Cerrar</ion-button>
+            <ion-button (click)="setOpen(false)" color="medium">Cerrar</ion-button>
           </ion-buttons>
         </ion-toolbar>
-        <ion-toolbar color="dark">
-          <ion-searchbar placeholder="Buscar arma..." (ionInput)="filterCatalog($event)"></ion-searchbar>
+        <ion-toolbar>
+          <ion-searchbar placeholder="Buscar skin en el catálogo..." (ionInput)="filterCatalog($event)"></ion-searchbar>
         </ion-toolbar>
       </ion-header>
+
       <ion-content class="cs2-bg ion-padding">
-        
-        <ion-item lines="none" *ngIf="newItem.item_id" color="success" style="border-radius: 8px; margin-bottom: 10px;">
-          <ion-label>Arma seleccionada lista para agregar.</ion-label>
-        </ion-item>
+        <div class="modal-wrapper">
+          <div *ngIf="newItem.item_id" class="selected-banner">
+            <span class="selected-dot"></span>
+            <span>Arma seleccionada lista para guardar en tu bóveda.</span>
+          </div>
 
-        <ion-card class="cs-item-card">
-          <ion-card-content>
-            <ion-item lines="full">
-              <ion-input label="Precio Pagado ($)" type="number" labelPlacement="stacked" [(ngModel)]="newItem.purchase_price"></ion-input>
+          <ion-card class="cs-item-card purchase-form-card">
+            <ion-card-content>
+              <label class="input-label">PRECIO PAGADO ($ USD)</label>
+              <ion-item lines="none" class="pro-input-item">
+                <ion-input
+                  type="number"
+                  placeholder="0.00"
+                  [(ngModel)]="newItem.purchase_price"
+                ></ion-input>
+              </ion-item>
+
+              <ion-button
+                expand="block"
+                class="btn-confirm-save ion-margin-top"
+                (click)="addInventoryItem()"
+                [disabled]="!newItem.item_id"
+              >
+                Guardar en Inventario
+              </ion-button>
+            </ion-card-content>
+          </ion-card>
+
+          <div class="section-heading" style="margin-top: 20px;">
+            <h2>CATÁLOGO DE MERCADO</h2>
+            <span class="section-count">{{ filteredCatalog.length }} resultados</span>
+          </div>
+
+          <ion-list class="catalog-modal-list">
+            <ion-item
+              *ngFor="let m of filteredCatalog"
+              button
+              lines="none"
+              (click)="selectItemForModal(m)"
+              class="catalog-modal-item"
+              [class.selected-catalog-item]="newItem.item_id === m.item_id"
+            >
+              <ion-thumbnail slot="start" class="catalog-thumb">
+                <img [src]="m.image_url" [alt]="m.name" />
+              </ion-thumbnail>
+              <ion-label>
+                <h2>{{ m.name }}</h2>
+                <p>{{ m.exterior }} • <span class="catalog-price">${{ m.current_price }}</span></p>
+              </ion-label>
             </ion-item>
-            
-            <ion-button expand="block" color="success" class="ion-margin-top" (click)="addInventoryItem()" [disabled]="!newItem.item_id">
-              Guardar en Inventario
-            </ion-button>
-          </ion-card-content>
-        </ion-card>
-
-        <h3 style="color: white; margin-top: 20px;">Resultados de Búsqueda</h3>
-        <ion-list style="background: transparent;">
-          <ion-item *ngFor="let m of filteredCatalog" button (click)="selectItemForModal(m)" [color]="newItem.item_id === m.item_id ? 'primary' : ''" style="--background: #1e1e1e; margin-bottom: 5px; border-radius: 8px;">
-            <ion-thumbnail slot="start">
-              <img [src]="m.image_url" />
-            </ion-thumbnail>
-            <ion-label>
-              <h2>{{ m.name }}</h2>
-              <p>{{ m.exterior }} - ${{ m.current_price }}</p>
-            </ion-label>
-          </ion-item>
-        </ion-list>
-
+          </ion-list>
+        </div>
       </ion-content>
     </ng-template>
   </ion-modal>

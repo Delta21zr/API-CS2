@@ -1,0 +1,56 @@
+.sources-wrapper {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 12px 4px 36px;
+}
+
+.card-eyebrow {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #38bdf8;
+  margin-bottom: 4px;
+}
+
+ion-card-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+}
+
+.info-key {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.info-val {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #f8fafc;
+
+  &.mono {
+    font-family: 'JetBrains Mono', monospace;
+    color: #fbbf24;
+  }
+}
+
+.empty-config-msg {
+  color: #94a3b8;
+  text-align: center;
+  padding: 20px;
+}

@@ -1,90 +1,129 @@
 <ion-header [translucent]="true">
-  <ion-toolbar color="dark">
-    <ion-title>Asistente & Análisis</ion-title>
+  <ion-toolbar>
+    <div class="header-container">
+      <div class="brand-badge">
+        <span class="brand-dot"></span>
+        <div>
+          <div class="brand-subtitle">INTELIGENCIA DE MERCADO</div>
+          <ion-title class="brand-title">ASISTENTE & ANÁLISIS</ion-title>
+        </div>
+      </div>
+    </div>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="cs2-bg ion-padding">
-  
-  <!-- Buscador (Autocompletado) -->
-  <ion-searchbar placeholder="Busca un arma para analizar..." [value]="searchTerm" (ionInput)="filterCatalog($event)" color="dark"></ion-searchbar>
-  
-  <!-- Lista de Resultados -->
-  <ion-list *ngIf="filteredCatalog.length > 0" style="background: #1e1e1e; border-radius: 8px; margin-bottom: 20px;">
-    <ion-item *ngFor="let m of filteredCatalog" button (click)="selectWeapon(m)" style="--background: transparent; color: white;">
-      <ion-thumbnail slot="start">
-        <img [src]="m.image_url" />
-      </ion-thumbnail>
-      <ion-label>
-        <h2>{{ m.name }}</h2>
-        <p style="color: #aaa;">{{ m.exterior }}</p>
-      </ion-label>
-    </ion-item>
-  </ion-list>
+<ion-content [fullscreen]="true" class="cs2-bg">
+  <div class="page-wrapper">
 
-  <!-- Arma Seleccionada -->
-  <ion-item class="cs-item-card" lines="none" style="margin-bottom: 20px; border-radius: 8px;" *ngIf="selectedItem">
-    <ion-thumbnail slot="start">
-      <img [src]="selectedItem.image_url" />
-    </ion-thumbnail>
-    <ion-label>
-      <h2 style="font-weight: bold; font-size: 1.1rem; color: white;">{{ selectedItem.name }}</h2>
-      <p style="color: #4CAF50;">Precio Actual: ${{ selectedItem.current_price }}</p>
-    </ion-label>
-  </ion-item>
+    <!-- Buscador Autocompletado -->
+    <div class="search-section">
+      <ion-searchbar
+        placeholder="Busca un arma para analizar su historial (ej. AK-47, AWP, Karambit)..."
+        [value]="searchTerm"
+        (ionInput)="filterCatalog($event)"
+      ></ion-searchbar>
 
-  <!-- Spinner de Carga -->
-  <div *ngIf="isLoading" class="ion-text-center ion-padding">
-    <ion-spinner name="crescent" color="primary"></ion-spinner>
-    <p style="color:white;">Analizando el mercado histórico...</p>
-  </div>
+      <!-- Lista desplegable de Resultados -->
+      <div *ngIf="filteredCatalog.length > 0" class="autocomplete-dropdown cs-item-card">
+        <div
+          *ngFor="let m of filteredCatalog"
+          class="autocomplete-row"
+          (click)="selectWeapon(m)"
+        >
+          <div class="auto-thumb">
+            <img [src]="m.image_url" [alt]="m.name" />
+          </div>
+          <div class="auto-info">
+            <h4>{{ m.name }}</h4>
+            <span>{{ m.exterior || 'Standard' }}</span>
+          </div>
+          <div class="auto-price">${{ m.current_price }}</div>
+        </div>
+      </div>
+    </div>
 
-  <!-- Contenido Principal -->
-  <div *ngIf="!isLoading && selectedItemId && lineChartData.datasets.length > 0">
-    
+    <!-- Arma Seleccionada (Hero Card) -->
+    <div class="selected-hero-card cs-item-card" *ngIf="selectedItem">
+      <div class="hero-thumb-frame">
+        <img [src]="selectedItem.image_url" [alt]="selectedItem.name" />
+      </div>
+      <div class="hero-meta">
+        <div class="hero-badges">
+          <span class="badge-exterior">{{ selectedItem.exterior || 'Standard' }}</span>
+          <span class="badge-live">COTIZACIÓN EN VIVO</span>
+        </div>
+        <h2 class="hero-weapon-name">{{ selectedItem.name }}</h2>
+      </div>
+      <div class="hero-price-box">
+        <span class="price-caption">PRECIO ACTUAL STEAM</span>
+        <span class="price-big">${{ selectedItem.current_price | number:'1.2-2' }}</span>
+      </div>
+    </div>
+
+    <!-- Spinner de Carga -->
+    <div *ngIf="isLoading" class="loading-box cs-item-card">
+      <ion-spinner name="crescent" color="warning"></ion-spinner>
+      <p>Analizando telemetría histórica del mercado...</p>
+    </div>
+
     <!-- Gráfica Histórica -->
-    <ion-card class="cs-item-card" *ngIf="!isLoading && selectedItemId && lineChartData.datasets.length > 0">
-      <ion-card-header>
-        <ion-card-subtitle>
-          Historial {{ selectedRange }} Días
-        </ion-card-subtitle>
-        <ion-card-title>Tendencia de Precio</ion-card-title>
-      </ion-card-header>
+    <div *ngIf="!isLoading && selectedItemId && lineChartData.datasets.length > 0">
+      <ion-card class="cs-item-card chart-panel-card">
+        <div class="chart-card-header">
+          <div>
+            <span class="chart-eyebrow">HISTORIAL {{ selectedRange }} DÍAS</span>
+            <h3 class="chart-heading">Tendencia de Precio ($ USD)</h3>
+          </div>
 
-      <ion-card-content>
-        <!-- Selector de Rango de Tiempo -->
-        <ion-segment [value]="selectedRange" (ionChange)="changeRange($event.detail.value)" mode="ios" style="margin-bottom: 15px;">
-          <ion-segment-button [value]="30">
-            <ion-label>30 Días</ion-label>
-          </ion-segment-button>
-          <ion-segment-button [value]="60">
-            <ion-label>60 Días</ion-label>
-          </ion-segment-button>
-          <ion-segment-button [value]="90">
-            <ion-label>90 Días</ion-label>
-          </ion-segment-button>
-          <ion-segment-button [value]="180">
-            <ion-label>6 Meses</ion-label>
-          </ion-segment-button>
-          <ion-segment-button [value]="365">
-            <ion-label>1 Año</ion-label>
-          </ion-segment-button>
-        </ion-segment>
+          <!-- Selector de Rango de Tiempo -->
+          <ion-segment
+            [value]="selectedRange"
+            (ionChange)="changeRange($event.detail.value)"
+            mode="ios"
+            class="pro-segment"
+          >
+            <ion-segment-button [value]="30">
+              <ion-label>30D</ion-label>
+            </ion-segment-button>
+            <ion-segment-button [value]="60">
+              <ion-label>60D</ion-label>
+            </ion-segment-button>
+            <ion-segment-button [value]="90">
+              <ion-label>90D</ion-label>
+            </ion-segment-button>
+            <ion-segment-button [value]="180">
+              <ion-label>6M</ion-label>
+            </ion-segment-button>
+            <ion-segment-button [value]="365">
+              <ion-label>1A</ion-label>
+            </ion-segment-button>
+          </ion-segment>
+        </div>
 
-        <canvas baseChart
-          [data]="lineChartData"
-          [options]="lineChartOptions"
-          [type]="lineChartType">
-        </canvas>
-      </ion-card-content>
-    </ion-card>
+        <ion-card-content>
+          <div class="canvas-wrapper">
+            <canvas
+              baseChart
+              [data]="lineChartData"
+              [options]="lineChartOptions"
+              [type]="lineChartType"
+            ></canvas>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Estado Inicial -->
+    <div *ngIf="!selectedItemId" class="empty-analysis-state cs-item-card">
+      <div class="empty-radar-icon">
+        <ion-icon name="analytics"></ion-icon>
+      </div>
+      <h2>Selecciona un Arma para Analizar</h2>
+      <p>
+        Utiliza el buscador superior para inspeccionar curvas de precios históricas
+        de 30 días a 1 año y detectar oportunidades de trading en CS2.
+      </p>
+    </div>
+
   </div>
-
-  <!-- Estado Inicial -->
-  <div *ngIf="!selectedItemId" class="ion-text-center ion-padding" style="color: #aaa; margin-top: 50px;">
-    <ion-icon name="analytics" style="font-size: 4rem; opacity: 0.5;"></ion-icon>
-    <h2>Selecciona un arma</h2>
-    <p>Usa el menú superior para cargar el historial de precios y recibir consejos de compra/venta de nuestro Asistente Inteligente.</p>
-  </div>
-
 </ion-content>

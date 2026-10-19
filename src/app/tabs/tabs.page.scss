@@ -1,1 +1,23 @@
+ion-tab-bar {
+  --background: rgba(11, 14, 20, 0.94);
+  --border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  height: 62px;
+  padding-bottom: env(safe-area-inset-bottom);
+}
 
+ion-tab-button {
+  --color: #64748b;
+  --color-selected: #f59e0b;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  transition: color 0.2s ease;
+
+  &.tab-selected ion-icon {
+    filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.55));
+  }
+}

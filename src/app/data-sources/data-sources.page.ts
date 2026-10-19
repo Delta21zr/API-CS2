@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem, IonLabel, IonNote, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonButtons, IonBackButton, IonBadge, IonButton } from '@ionic/angular';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonButtons, IonBackButton, IonBadge, IonButton } from '@ionic/angular';
 import { NetworkService } from '../services/network.service';
 import { SyncService, SyncOperation } from '../services/sync.service';
 
@@ -9,7 +9,7 @@ import { SyncService, SyncOperation } from '../services/sync.service';
   selector: 'app-data-sources',
   templateUrl: './data-sources.page.html',
   styleUrls: ['./data-sources.page.scss'],
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem, IonLabel, IonNote, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonButtons, IonBackButton, IonBadge, IonButton, CommonModule, FormsModule]
+  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonButtons, IonBackButton, IonBadge, IonButton, CommonModule, FormsModule]
 })
 export class DataSourcesPage implements OnInit {
   serverConfig: any = null;
