@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 220" width="100%" height="100%">
+  <defs>
+    <linearGradient id="cyberGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="50%" stop-color="#818cf8"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <linearGradient id="baseDark" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0b0e14"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Silueta Táctica de Rifle CS2 -->
+  <path d="M 520 80 L 550 80 L 555 76 L 555 90 L 550 86 L 520 86 Z" fill="#64748b"/>
+  <rect x="420" y="82" width="100" height="4" fill="#475569"/>
+  <rect x="360" y="74" width="70" height="20" rx="3" fill="#334155"/>
+  <path d="M 230 76 L 360 76 L 360 108 L 290 108 L 275 140 L 250 138 L 260 108 L 225 108 L 195 125 L 110 130 L 80 155 L 65 150 L 85 102 L 135 84 L 230 76 Z" 
+        fill="url(#baseDark)" stroke="url(#cyberGrad)" stroke-width="2"/>
+  <path d="M 270 108 C 275 135, 295 165, 325 185 L 300 190 C 270 170, 250 140, 245 108 Z" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+
+  <!-- HUD Retícula de CS2 -->
+  <circle cx="300" cy="92" r="32" fill="none" stroke="#38bdf8" stroke-dasharray="4 4" opacity="0.4"/>
+  <line x1="260" y1="92" x2="340" y2="92" stroke="#38bdf8" opacity="0.3"/>
+  <line x1="300" y1="52" x2="300" y2="132" stroke="#38bdf8" opacity="0.3"/>
+
+  <text x="300" y="195" text-anchor="middle" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="12" letter-spacing="2">COUNTER-STRIKE 2 • WEAPON ASSET</text>
+</svg>

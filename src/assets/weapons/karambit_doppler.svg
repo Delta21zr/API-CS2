@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 240" width="100%" height="100%">
+  <defs>
+    <!-- Gradiente Doppler Sapphire (Azul zafiro profundo a cian radiante) -->
+    <linearGradient id="dopplerSapphire" x1="0%" y1="0%" x2="100%" y2="80%">
+      <stop offset="0%" stop-color="#1e1b4b"/>
+      <stop offset="25%" stop-color="#312e81"/>
+      <stop offset="55%" stop-color="#2563eb"/>
+      <stop offset="85%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#93c5fd"/>
+    </linearGradient>
+    <linearGradient id="edgeSheen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="60%" stop-color="#7dd3fc"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+    <linearGradient id="knifeHandle" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#334155"/>
+      <stop offset="50%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+    <filter id="sapphireGlow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Sombra en suelo -->
+  <ellipse cx="300" cy="220" rx="240" ry="10" fill="rgba(0,0,0,0.55)" filter="blur(6px)"/>
+
+  <!-- HOJA CURVA DEL KARAMBIT (Talon Hawkbill Blade) -->
+  <path d="M 230 115 
+           C 270 100, 340 90, 420 110
+           C 490 128, 540 165, 560 205
+           C 510 185, 430 160, 350 148
+           C 290 140, 245 145, 230 148
+           Z" 
+        fill="url(#dopplerSapphire)" stroke="#60a5fa" stroke-width="2.5" filter="url(#sapphireGlow)"/>
+
+  <!-- Filo afilado brillante (Cutting Edge) -->
+  <path d="M 235 147 
+           C 285 143, 350 148, 430 160
+           C 505 183, 545 200, 560 205
+           C 538 180, 475 145, 410 128
+           Z" 
+        fill="url(#edgeSheen)" opacity="0.88"/>
+
+  <!-- Detalles de humo cósmico Doppler en la hoja -->
+  <path d="M 310 115 Q 365 110 420 125 Q 375 135 320 125 Z" fill="#60a5fa" opacity="0.45" filter="blur(2px)"/>
+  <path d="M 380 130 Q 445 135 490 160 Q 435 155 390 142 Z" fill="#93c5fd" opacity="0.5" filter="blur(3px)"/>
+
+  <!-- MANGO TÁCTICO G10 (Ergonomic Handle) -->
+  <path d="M 240 115 
+           L 180 90 
+           L 135 92 
+           C 115 95, 95 105, 80 125 
+           C 70 140, 75 160, 90 172 
+           C 105 182, 125 180, 145 170
+           L 180 152 
+           L 215 152 
+           L 240 148 
+           Z" 
+        fill="url(#knifeHandle)" stroke="#475569" stroke-width="2"/>
+
+  <!-- Ranuras ergonómicas para los dedos (Finger Grooves) -->
+  <path d="M 180 92 L 184 150" stroke="#1e293b" stroke-width="4"/>
+  <path d="M 155 96 L 158 162" stroke="#1e293b" stroke-width="4"/>
+  <path d="M 130 105 L 132 170" stroke="#1e293b" stroke-width="4"/>
+
+  <!-- Remaches del mango (Torx Screws) -->
+  <circle cx="140" cy="132" r="5" fill="#64748b" stroke="#0f172a" stroke-width="1.5"/>
+  <circle cx="170" cy="120" r="5" fill="#64748b" stroke="#0f172a" stroke-width="1.5"/>
+  <circle cx="205" cy="128" r="5" fill="#64748b" stroke="#0f172a" stroke-width="1.5"/>
+
+  <!-- ANILLO DE SEGURIDAD KARAMBIT (Finger Safety Ring) -->
+  <circle cx="100" cy="145" r="28" fill="url(#knifeHandle)" stroke="#475569" stroke-width="3"/>
+  <circle cx="100" cy="145" r="17" fill="#0b0e14" stroke="#38bdf8" stroke-width="2" filter="url(#sapphireGlow)"/>
+
+  <!-- Textos oficiales de display -->
+  <text x="35" y="45" fill="#a855f7" font-family="sans-serif" font-weight="900" font-size="16" letter-spacing="3">★ KARAMBIT | DOPPLER</text>
+  <text x="35" y="66" fill="#38bdf8" font-family="monospace" font-weight="800" font-size="13">PHASE: SAPPHIRE (GEM)</text>
+  <text x="460" y="45" fill="#10b981" font-family="monospace" font-weight="700" font-size="14">FACTORY NEW</text>
+</svg>

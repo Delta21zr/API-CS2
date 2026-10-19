@@ -3,17 +3,18 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonList, IonItem, IonThumbnail, IonLabel, IonCard, IonCardContent, IonButton, IonIcon, IonButtons, IonModal, IonInput, IonSearchbar } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { trash, add, wallet } from 'ionicons/icons';
+import { trash, add, wallet, sparkles, eye } from 'ionicons/icons';
 import { ApiService } from '../services/api.service';
 import { MarketItem, UserInventory } from '../interfaces/models';
 import { ChangeDetectorRef } from '@angular/core';
+import { WeaponInspectorComponent, InspectableWeapon } from '../weapon-inspector/weapon-inspector.component';
 
 @Component({
   selector: 'app-tab2',
   templateUrl: './tab2.page.html',
   styleUrls: ['./tab2.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonToolbar, IonTitle, IonList, IonItem, IonThumbnail, IonLabel, IonCard, IonCardContent, IonButton, IonIcon, IonButtons, IonModal, IonInput, IonSearchbar, CommonModule, FormsModule]
+  imports: [IonContent, IonHeader, IonToolbar, IonTitle, IonList, IonItem, IonThumbnail, IonLabel, IonCard, IonCardContent, IonButton, IonIcon, IonButtons, IonModal, IonInput, IonSearchbar, CommonModule, FormsModule, WeaponInspectorComponent]
 })
 export class Tab2Page {
   inventoryItems: UserInventory[] = [];
@@ -21,11 +22,15 @@ export class Tab2Page {
   filteredCatalog: MarketItem[] = [];
   isModalOpen = false;
 
+  // Estado del Inspector Holográfico 3D
+  isInspectorOpen = false;
+  inspectedWeapon: InspectableWeapon | null = null;
+
   // Usuario simulado (en el futuro vendrá del login)
   currentUserId = 1;
 
   constructor(private apiService: ApiService, private cdr: ChangeDetectorRef) {
-    addIcons({ trash, add, wallet });
+    addIcons({ trash, add, wallet, sparkles, eye });
     const userStr = localStorage.getItem('user');
     if (userStr) {
       this.currentUserId = JSON.parse(userStr).id;
@@ -38,6 +43,42 @@ export class Tab2Page {
     purchase_price: 0,
     quantity: 1
   };
+
+  openWeaponInspector(item?: UserInventory) {
+    if (item) {
+      this.inspectedWeapon = {
+        item_id: item.item_id,
+        name: item.name || 'CS2 Weapon Skin',
+        exterior: item.exterior || 'Factory New',
+        rarity: item.rarity || 'Covert',
+        image_url: item.image_url,
+        current_price: item.current_price,
+        purchase_price: item.purchase_price
+      };
+    } else {
+      // Arma de demostración si la bóveda está vacía o sin conexión
+      this.inspectedWeapon = {
+        item_id: 'demo-dlore',
+        name: 'AWP | Dragon Lore',
+        exterior: 'Factory New',
+        rarity: 'Contraband',
+        image_url: 'assets/weapons/awp_dragon_lore.svg',
+        current_price: 11450.00,
+        purchase_price: 8900.00
+      };
+    }
+    this.isInspectorOpen = true;
+  }
+
+  closeWeaponInspector() {
+    this.isInspectorOpen = false;
+  }
+
+  onImgError(event: any) {
+    if (event && event.target) {
+      event.target.src = 'assets/weapons/cs2_fallback.svg';
+    }
+  }
 
 
 

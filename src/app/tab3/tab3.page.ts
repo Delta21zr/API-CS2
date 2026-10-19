@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonCard, IonCardContent, IonIcon, IonSpinner, IonSearchbar, IonLabel, IonSegment, IonSegmentButton } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { trendingUp, trendingDown, analytics, search } from 'ionicons/icons';
+import { trendingUp, trendingDown, analytics, search, sparkles } from 'ionicons/icons';
 import { ApiService } from '../services/api.service';
 import { MarketItem, PriceHistory } from '../interfaces/models';
 import { ChartConfiguration, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
+import { WeaponInspectorComponent, InspectableWeapon } from '../weapon-inspector/weapon-inspector.component';
 
 import { ChangeDetectorRef } from '@angular/core';
 
@@ -16,7 +17,7 @@ import { ChangeDetectorRef } from '@angular/core';
   templateUrl: './tab3.page.html',
   styleUrls: ['./tab3.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonToolbar, IonTitle, IonCard, IonCardContent, IonIcon, IonSpinner, IonSearchbar, IonLabel, IonSegment, IonSegmentButton, CommonModule, FormsModule, BaseChartDirective]
+  imports: [IonContent, IonHeader, IonToolbar, IonTitle, IonCard, IonCardContent, IonIcon, IonSpinner, IonSearchbar, IonLabel, IonSegment, IonSegmentButton, CommonModule, FormsModule, BaseChartDirective, WeaponInspectorComponent]
 })
 export class Tab3Page implements OnInit {
   marketCatalog: MarketItem[] = [];
@@ -30,6 +31,44 @@ export class Tab3Page implements OnInit {
   
   fullHistory: PriceHistory[] = [];
   selectedRange: number = 30; // por defecto 30 días
+
+  // Estado del Inspector 3D Holográfico
+  isInspectorOpen = false;
+  inspectedWeapon: InspectableWeapon | null = null;
+
+  // Vitrina rápida multimedia para inspección 3D inmediata con assets locales 100% confiables
+  featuredShowcaseSkins: InspectableWeapon[] = [
+    {
+      item_id: 'showcase-dlore',
+      name: 'AWP | Dragon Lore',
+      exterior: 'Factory New',
+      rarity: 'Contraband',
+      current_price: 11450.00,
+      image_url: 'assets/weapons/awp_dragon_lore.svg'
+    },
+    {
+      item_id: 'showcase-karambit',
+      name: '★ Karambit | Doppler (Sapphire)',
+      exterior: 'Factory New',
+      rarity: 'Covert Knife',
+      current_price: 9850.00,
+      image_url: 'assets/weapons/karambit_doppler.svg'
+    },
+    {
+      item_id: 'showcase-ak47',
+      name: 'AK-47 | Fire Serpent',
+      exterior: 'Minimal Wear',
+      rarity: 'Covert Rifle',
+      current_price: 1420.50,
+      image_url: 'assets/weapons/ak47_fire_serpent.svg'
+    }
+  ];
+
+  onImgError(event: any) {
+    if (event && event.target) {
+      event.target.src = 'assets/weapons/cs2_fallback.svg';
+    }
+  }
 
   // Chart.js Data
   public lineChartData: ChartConfiguration['data'] = {
@@ -46,7 +85,30 @@ export class Tab3Page implements OnInit {
   public lineChartType: ChartType = 'line';
 
   constructor(private apiService: ApiService, private cdr: ChangeDetectorRef) {
-    addIcons({ trendingUp, trendingDown, analytics, search });
+    addIcons({ trendingUp, trendingDown, analytics, search, sparkles });
+  }
+
+  openInspectorForSelected() {
+    if (this.selectedItem) {
+      this.inspectedWeapon = {
+        item_id: this.selectedItem.item_id,
+        name: this.selectedItem.name,
+        exterior: this.selectedItem.exterior || 'Factory New',
+        rarity: this.selectedItem.rarity || 'Covert',
+        image_url: this.selectedItem.image_url,
+        current_price: this.selectedItem.current_price
+      };
+      this.isInspectorOpen = true;
+    }
+  }
+
+  openInspectorShowcase(skin: InspectableWeapon) {
+    this.inspectedWeapon = skin;
+    this.isInspectorOpen = true;
+  }
+
+  closeWeaponInspector() {
+    this.isInspectorOpen = false;
   }
 
   ngOnInit() {

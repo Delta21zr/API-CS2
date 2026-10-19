@@ -9,7 +9,11 @@
         </div>
       </div>
 
-      <ion-buttons slot="end">
+      <ion-buttons slot="end" class="header-actions-group">
+        <button class="btn-inspect-demo" (click)="openWeaponInspector()" title="Probar Inspector 3D Holográfico">
+          <ion-icon name="sparkles"></ion-icon>
+          <span>Demo 3D</span>
+        </button>
         <button class="btn-add-purchase" (click)="setOpen(true)">
           <ion-icon name="add"></ion-icon>
           <span>Registrar Compra</span>
@@ -67,25 +71,32 @@
       </div>
       <h3>Tu bóveda de skins está vacía</h3>
       <p>Registra tus compras de CS2 para monitorear el valor de mercado y calcular tu ganancia neta automáticamente.</p>
-      <button class="btn-add-purchase-lg" (click)="setOpen(true)">
-        <ion-icon name="add"></ion-icon>
-        Agregar Primera Skin
-      </button>
+      <div class="empty-actions-row">
+        <button class="btn-add-purchase-lg" (click)="setOpen(true)">
+          <ion-icon name="add"></ion-icon>
+          Agregar Primera Skin
+        </button>
+        <button class="btn-demo-holo-lg" (click)="openWeaponInspector()">
+          <ion-icon name="sparkles"></ion-icon>
+          Probar Inspector 3D
+        </button>
+      </div>
     </div>
 
     <!-- Inventory Weapon Cards Grid -->
     <div class="section-heading" *ngIf="inventoryItems.length > 0">
       <h2>ACTIVOS EN PORTAFOLIO</h2>
-      <span class="section-count">{{ inventoryItems.length }} artículos</span>
+      <span class="section-count">{{ inventoryItems.length }} artículos • Toca un arma para Inspeccionar en 3D</span>
     </div>
 
     <div class="inventory-grid" *ngIf="inventoryItems.length > 0">
       <div *ngFor="let item of inventoryItems" class="weapon-vault-card cs-item-card">
-        <div class="weapon-thumb-box">
-          <img [src]="item.image_url" [alt]="item.name" />
+        <div class="weapon-thumb-box" (click)="openWeaponInspector(item)" title="Inspeccionar en 3D">
+          <img [src]="item.image_url" [alt]="item.name" (error)="onImgError($event)" />
+          <span class="thumb-3d-badge">3D</span>
         </div>
 
-        <div class="weapon-details">
+        <div class="weapon-details" (click)="openWeaponInspector(item)" style="cursor: pointer;">
           <div class="weapon-top-row">
             <span class="exterior-pill">{{ item.exterior || 'Standard' }}</span>
             <span
@@ -111,13 +122,25 @@
           </div>
         </div>
 
-        <button class="btn-delete-skin" (click)="deleteInventoryItem(item.id)" title="Eliminar del inventario">
-          <ion-icon name="trash"></ion-icon>
-        </button>
+        <div class="card-action-col">
+          <button class="btn-inspect-skin" (click)="openWeaponInspector(item)" title="Inspeccionar Arma en 3D">
+            <ion-icon name="sparkles"></ion-icon>
+          </button>
+          <button class="btn-delete-skin" (click)="deleteInventoryItem(item.id)" title="Eliminar del inventario">
+            <ion-icon name="trash"></ion-icon>
+          </button>
+        </div>
       </div>
     </div>
 
   </div>
+
+  <!-- Componente Modal: Inspector Holográfico 3D & Audio -->
+  <app-weapon-inspector
+    [isOpen]="isInspectorOpen"
+    [weapon]="inspectedWeapon"
+    (closeInspector)="closeWeaponInspector()"
+  ></app-weapon-inspector>
 
   <!-- Modal para Agregar Arma al Inventario -->
   <ion-modal [isOpen]="isModalOpen" (didDismiss)="setOpen(false)">
@@ -178,7 +201,7 @@
               [class.selected-catalog-item]="newItem.item_id === m.item_id"
             >
               <ion-thumbnail slot="start" class="catalog-thumb">
-                <img [src]="m.image_url" [alt]="m.name" />
+                <img [src]="m.image_url" [alt]="m.name" (error)="onImgError($event)" />
               </ion-thumbnail>
               <ion-label>
                 <h2>{{ m.name }}</h2>

@@ -1,0 +1,408 @@
+.inspector-modal {
+  --width: 94%;
+  --max-width: 840px;
+  --height: 92%;
+  --border-radius: 20px;
+  --background: #0b0e14;
+}
+
+.inspector-toolbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 12px;
+}
+
+.inspector-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.holo-pulse-dot {
+  width: 10px;
+  height: 24px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #f59e0b, #38bdf8);
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.7);
+  animation: pulseGlow 2s infinite alternate;
+}
+
+@keyframes pulseGlow {
+  0% { filter: hue-rotate(0deg); transform: scaleY(1); }
+  100% { filter: hue-rotate(45deg); transform: scaleY(1.12); }
+}
+
+.inspector-eyebrow {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: #38bdf8;
+}
+
+.inspector-title {
+  padding: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.inspector-container {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 16px 14px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ============================================================
+   ESCENARIO 3D HOLOGRÁFICO INTERACTIVO
+   ============================================================ */
+.holo-stage-wrapper {
+  perspective: 1100px;
+  user-select: none;
+  touch-action: none;
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.holo-card-3d {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  padding: 20px;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(56, 189, 248, 0.16), transparent 60%),
+    radial-gradient(circle at 80% 80%, rgba(245, 158, 11, 0.15), transparent 55%),
+    linear-gradient(145deg, rgba(22, 29, 43, 0.95), rgba(11, 14, 20, 0.98));
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  box-shadow:
+    0 22px 48px -12px rgba(0, 0, 0, 0.85),
+    0 0 28px rgba(245, 158, 11, 0.12);
+  transform-style: preserve-3d;
+  transition: transform 0.12s ease-out, box-shadow 0.2s ease;
+}
+
+/* Animación continua de Órbita Flotante 3D */
+.auto-orbit-anim {
+  animation: floatingOrbit3D 6s ease-in-out infinite;
+}
+
+@keyframes floatingOrbit3D {
+  0% {
+    transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px);
+  }
+  25% {
+    transform: perspective(1000px) rotateX(6deg) rotateY(-12deg) translateY(-5px);
+  }
+  50% {
+    transform: perspective(1000px) rotateX(-4deg) rotateY(0deg) translateY(-8px);
+  }
+  75% {
+    transform: perspective(1000px) rotateX(6deg) rotateY(12deg) translateY(-5px);
+  }
+  100% {
+    transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px);
+  }
+}
+
+/* Animación de Inspección CS2 (Tecla F) */
+.inspect-flip-anim {
+  animation: cs2InspectShowcase 1.3s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+}
+
+@keyframes cs2InspectShowcase {
+  0% {
+    transform: perspective(1000px) rotateY(0deg) rotateZ(0deg) scale(1);
+  }
+  30% {
+    transform: perspective(1000px) rotateY(-28deg) rotateX(12deg) rotateZ(-4deg) scale(1.06);
+  }
+  68% {
+    transform: perspective(1000px) rotateY(28deg) rotateX(-10deg) rotateZ(4deg) scale(1.06);
+  }
+  100% {
+    transform: perspective(1000px) rotateY(0deg) rotateZ(0deg) scale(1);
+  }
+}
+
+.holo-glare-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  z-index: 2;
+}
+
+.badges-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wear-badge {
+  background: rgba(56, 189, 248, 0.16);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  color: #38bdf8;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 8px;
+}
+
+/* Escenario Central de la Imagen PNG */
+.weapon-render-stage {
+  position: relative;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 12px 0;
+  transform-style: preserve-3d;
+  z-index: 4;
+}
+
+.pedestal-glow-ring {
+  position: absolute;
+  bottom: 12px;
+  width: 72%;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(245, 158, 11, 0.38) 0%, rgba(56, 189, 248, 0.15) 55%, transparent 80%);
+  filter: blur(6px);
+  transform: rotateX(70deg);
+}
+
+.weapon-3d-sprite {
+  max-width: 88%;
+  max-height: 200px;
+  object-fit: contain;
+  transform: translateZ(50px);
+  transition: filter 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+
+
+
+.card-3d-footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 12px;
+  position: relative;
+  z-index: 4;
+}
+
+.weapon-3d-title {
+  margin: 0 0 4px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.interaction-hint {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: #94a3b8;
+
+  ion-icon {
+    color: #f59e0b;
+  }
+}
+
+.price-holo-box {
+  text-align: right;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  padding: 6px 12px;
+  border-radius: 10px;
+
+  .price-holo-label {
+    display: block;
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: #94a3b8;
+  }
+
+  .price-holo-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #34d399;
+  }
+}
+
+/* ============================================================
+   BOTONERA DE ACCIONES DE INSPECCIÓN
+   ============================================================ */
+.action-buttons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.action-fx-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(20, 25, 35, 0.85);
+  color: #f8fafc;
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+
+  ion-icon {
+    font-size: 1.55rem;
+    flex-shrink: 0;
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+  }
+
+  strong {
+    font-size: 0.88rem;
+    font-weight: 700;
+  }
+
+  span {
+    font-size: 0.7rem;
+    color: #94a3b8;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &.btn-inspect {
+    border-color: rgba(245, 158, 11, 0.4);
+    ion-icon { color: #f59e0b; }
+    &:hover { background: rgba(245, 158, 11, 0.15); }
+  }
+
+  &.btn-orbit {
+    border-color: rgba(16, 185, 129, 0.4);
+    ion-icon { color: #10b981; }
+    &.active-orbit {
+      background: rgba(16, 185, 129, 0.18);
+      border-color: #10b981;
+    }
+  }
+}
+
+/* ============================================================
+   PANEL DE FLOAT & TALLER DE STICKERS
+   ============================================================ */
+.inspector-panel {
+  padding: 16px 18px;
+  margin: 0;
+}
+
+.panel-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+
+  .panel-eyebrow {
+    display: block;
+    font-size: 0.64rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: #f59e0b;
+  }
+
+  h3 {
+    margin: 2px 0 0;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #f8fafc;
+  }
+
+  .panel-hint {
+    font-size: 0.72rem;
+    color: #94a3b8;
+  }
+}
+
+.wear-spectrum-bar {
+  position: relative;
+  display: flex;
+  height: 18px;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 4px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  color: #0b0e14;
+
+  .seg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .seg-fn { width: 7%; background: #10b981; }
+  .seg-mw { width: 8%; background: #84cc16; }
+  .seg-ft { width: 23%; background: #eab308; }
+  .seg-ww { width: 7%; background: #f97316; }
+  .seg-bs { width: 55%; background: #ef4444; }
+
+  .wear-pointer {
+    position: absolute;
+    top: -2px;
+    bottom: -2px;
+    width: 4px;
+    background: #ffffff;
+    box-shadow: 0 0 8px #000000;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+}
+
+
+
+.btn-export-showcase {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(245, 158, 11, 0.2));
+  color: #f8fafc;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.15s ease;
+
+  ion-icon {
+    font-size: 1.2rem;
+    color: #38bdf8;
+  }
+
+  &:hover {
+    filter: brightness(1.15);
+    transform: translateY(-1px);
+  }
+}

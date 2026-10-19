@@ -31,7 +31,7 @@
           (click)="selectWeapon(m)"
         >
           <div class="auto-thumb">
-            <img [src]="m.image_url" [alt]="m.name" />
+            <img [src]="m.image_url" [alt]="m.name" (error)="onImgError($event)" />
           </div>
           <div class="auto-info">
             <h4>{{ m.name }}</h4>
@@ -44,8 +44,8 @@
 
     <!-- Arma Seleccionada (Hero Card) -->
     <div class="selected-hero-card cs-item-card" *ngIf="selectedItem">
-      <div class="hero-thumb-frame">
-        <img [src]="selectedItem.image_url" [alt]="selectedItem.name" />
+      <div class="hero-thumb-frame" (click)="openInspectorForSelected()" title="Inspeccionar en 3D">
+        <img [src]="selectedItem.image_url" [alt]="selectedItem.name" (error)="onImgError($event)" />
       </div>
       <div class="hero-meta">
         <div class="hero-badges">
@@ -53,6 +53,10 @@
           <span class="badge-live">COTIZACIÓN EN VIVO</span>
         </div>
         <h2 class="hero-weapon-name">{{ selectedItem.name }}</h2>
+        <button class="btn-hero-inspect-3d" (click)="openInspectorForSelected()">
+          <ion-icon name="sparkles"></ion-icon>
+          <span>Inspeccionar Arma en 3D</span>
+        </button>
       </div>
       <div class="hero-price-box">
         <span class="price-caption">PRECIO ACTUAL STEAM</span>
@@ -113,6 +117,39 @@
       </ion-card>
     </div>
 
+    <!-- Vitrina Interactiva 3D (Destacados de CS2) -->
+    <div class="showcase-section">
+      <div class="showcase-header">
+        <div>
+          <span class="showcase-eyebrow">EXPERIENCIA MULTIMEDIA INTERACTIVA</span>
+          <h3>Vitrina de Inspección Holográfica 3D</h3>
+        </div>
+        <span class="showcase-sub">Toca cualquier arma para probar rotación 3D, simulador de float y exportación</span>
+      </div>
+
+      <div class="showcase-cards-grid">
+        <div
+          *ngFor="let skin of featuredShowcaseSkins"
+          class="showcase-skin-card cs-item-card"
+          (click)="openInspectorShowcase(skin)"
+        >
+          <div class="showcase-img-wrap">
+            <img [src]="skin.image_url" [alt]="skin.name" (error)="onImgError($event)" />
+          </div>
+          <div class="showcase-card-body">
+            <span class="showcase-rarity">{{ skin.rarity }} • {{ skin.exterior }}</span>
+            <h4>{{ skin.name }}</h4>
+            <div class="showcase-bottom-row">
+              <span class="showcase-price">${{ skin.current_price | number:'1.2-2' }}</span>
+              <span class="showcase-cta">
+                <ion-icon name="sparkles"></ion-icon> Inspeccionar 3D
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Estado Inicial -->
     <div *ngIf="!selectedItemId" class="empty-analysis-state cs-item-card">
       <div class="empty-radar-icon">
@@ -126,4 +163,12 @@
     </div>
 
   </div>
+
+  <!-- Componente Modal: Inspector Holográfico 3D & Audio -->
+  <app-weapon-inspector
+    [isOpen]="isInspectorOpen"
+    [weapon]="inspectedWeapon"
+    (closeInspector)="closeWeaponInspector()"
+  ></app-weapon-inspector>
+
 </ion-content>

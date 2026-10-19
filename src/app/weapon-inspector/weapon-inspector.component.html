@@ -1,0 +1,158 @@
+<ion-modal
+  [isOpen]="isOpen"
+  (willPresent)="onModalWillPresent()"
+  (didDismiss)="dismiss()"
+  class="inspector-modal"
+>
+  <ng-template>
+    <ion-header [translucent]="true">
+      <ion-toolbar>
+        <div class="inspector-toolbar-inner">
+          <div class="inspector-brand">
+            <span class="holo-pulse-dot"></span>
+            <div>
+              <div class="inspector-eyebrow">ESTUDIO DE INSPECCIÓN 3D • CS2</div>
+              <ion-title class="inspector-title">INSPECTOR HOLOGRÁFICO DE ARMA</ion-title>
+            </div>
+          </div>
+
+          <ion-buttons slot="end">
+            <ion-button (click)="dismiss()" color="light">
+              <ion-icon name="close" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </div>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="cs2-bg">
+      <div class="inspector-container" *ngIf="weapon">
+
+        <!-- =======================================================
+             ESCENARIO 3D INTERACTIVO (TOUCH / MOUSE + HOLOGRAMA)
+             ======================================================= -->
+        <div
+          #stageEl
+          class="holo-stage-wrapper"
+          (mousemove)="onStagePointerMove($event, stageEl)"
+          (touchmove)="onStagePointerMove($event, stageEl)"
+          (mouseleave)="onStagePointerLeave()"
+          (touchend)="onStagePointerLeave()"
+        >
+          <div
+            class="holo-card-3d"
+            [class.auto-orbit-anim]="autoOrbit && !isInteracting"
+            [class.inspect-flip-anim]="isInspectingAnim"
+            [style.transform]="!autoOrbit || isInteracting ? 'perspective(1000px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) scale3d(1.02, 1.02, 1.02)' : ''"
+          >
+            <!-- Brillo Iridiscente Holográfico que sigue al dedo/cursor -->
+            <div
+              class="holo-glare-layer"
+              [style.background]="'radial-gradient(circle at ' + glareX + '% ' + glareY + '%, rgba(245, 158, 11, 0.28), rgba(56, 189, 248, 0.18) 38%, transparent 70%)'"
+            ></div>
+
+            <!-- Cabecera dentro de la Tarjeta 3D -->
+            <div class="card-3d-top">
+              <div class="badges-left">
+                <span class="wear-badge">{{ getWearCategoryLabel() }}</span>
+              </div>
+            </div>
+
+            <!-- Contenedor Principal del Arma con Parallax 3D -->
+            <div class="weapon-render-stage">
+              <div class="pedestal-glow-ring"></div>
+
+              <img
+                [src]="weapon.image_url"
+                [alt]="weapon.name"
+                class="weapon-3d-sprite"
+                [style.filter]="getWeaponImageFilter()"
+                (error)="onImgError($event)"
+              />
+            </div>
+
+            <!-- Pie de la tarjeta 3D -->
+            <div class="card-3d-footer">
+              <div>
+                <h2 class="weapon-3d-title">{{ weapon.name }}</h2>
+                <p class="interaction-hint">
+                  <ion-icon name="sync"></ion-icon>
+                  Arrastra con el dedo o mueve el cursor para rotar en 3D
+                </p>
+              </div>
+
+              <div class="price-holo-box" *ngIf="weapon.current_price !== undefined">
+                <span class="price-holo-label">COTIZACIÓN STEAM</span>
+                <span class="price-holo-val">${{ weapon.current_price | number:'1.2-2' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- =======================================================
+             BOTONERA DE ACCIONES DE INSPECCIÓN 3D
+             ======================================================= -->
+        <div class="action-buttons-grid">
+          <button class="action-fx-btn btn-inspect" (click)="triggerInspectAnimation()">
+            <ion-icon name="sparkles"></ion-icon>
+            <div>
+              <strong>Inspeccionar (F)</strong>
+              <span>Rotación 360° en Vitrina</span>
+            </div>
+          </button>
+
+          <button
+            class="action-fx-btn btn-orbit"
+            [class.active-orbit]="autoOrbit"
+            (click)="toggleAutoOrbit()"
+          >
+            <ion-icon name="sync"></ion-icon>
+            <div>
+              <strong>{{ autoOrbit ? 'Órbita Activa' : 'Órbita Manual' }}</strong>
+              <span>Flotación Continua</span>
+            </div>
+          </button>
+        </div>
+
+        <!-- =======================================================
+             PANEL INTERACTIVO: SIMULADOR DE DESGASTE (FLOAT VALUE)
+             ======================================================= -->
+        <div class="inspector-panel cs-item-card">
+          <div class="panel-header-row">
+            <div>
+              <span class="panel-eyebrow">DESGASTE DE PINTURA EN TIEMPO REAL</span>
+              <h3>Simulador de Float Value ({{ floatValue | number:'1.4-4' }})</h3>
+            </div>
+            <ion-badge color="warning">{{ getWearCategoryLabel() }}</ion-badge>
+          </div>
+
+          <!-- Barra de espectro de desgaste estilo CS2 -->
+          <div class="wear-spectrum-bar">
+            <div class="seg seg-fn" title="Factory New (0.00 - 0.07)">FN</div>
+            <div class="seg seg-mw" title="Minimal Wear (0.07 - 0.15)">MW</div>
+            <div class="seg seg-ft" title="Field-Tested (0.15 - 0.38)">FT</div>
+            <div class="seg seg-ww" title="Well-Worn (0.38 - 0.45)">WW</div>
+            <div class="seg seg-bs" title="Battle-Scarred (0.45 - 1.00)">BS</div>
+            <div class="wear-pointer" [style.left.%]="floatValue * 100"></div>
+          </div>
+
+          <ion-range
+            [min]="0.0001"
+            [max]="0.9999"
+            [step]="0.005"
+            [value]="floatValue"
+            (ionInput)="onFloatChange($event)"
+            color="warning"
+          ></ion-range>
+        </div>
+
+        <!-- Botón de Exportación de Imagen (Fotografía / Archivo PNG) -->
+        <button class="btn-export-showcase" (click)="exportShowcaseCard()">
+          <ion-icon name="download"></ion-icon>
+          <span>Exportar Ficha de Inspección en Alta Resolución (.PNG)</span>
+        </button>
+
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>
