@@ -19,7 +19,10 @@ export class ApiService {
         // Fallback
       }
     }
-    const ip = (localStorage.getItem('serverIp') || 'localhost').trim();
+    const ip = (localStorage.getItem('serverIp') || 'https://routine-cables-compliance-shadow.trycloudflare.com').trim();
+    if (ip.startsWith('http://') || ip.startsWith('https://')) {
+      return `${ip}/api.php`;
+    }
     return `http://${ip}/api.php`;
   }
 

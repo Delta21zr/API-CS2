@@ -24,7 +24,7 @@ export class LoginPage implements OnInit, AfterViewInit {
   topLayerMargin: string = '0';
 
   // Variables de Formulario
-  serverIp: string = 'localhost';
+  serverIp: string = 'https://routine-cables-compliance-shadow.trycloudflare.com';
   loginData = { username: '', password: '' };
   signupData = { email: '', username: '', password: '' };
 
@@ -52,10 +52,10 @@ export class LoginPage implements OnInit, AfterViewInit {
         const config = JSON.parse(configStr);
         this.serverIp = `${config.protocol}://${config.ip}${config.port !== '80' && config.port !== '443' ? ':' + config.port : ''}`;
       } catch(e) {
-        this.serverIp = localStorage.getItem('serverIp') || 'localhost';
+        this.serverIp = localStorage.getItem('serverIp') || 'https://routine-cables-compliance-shadow.trycloudflare.com';
       }
     } else {
-       this.serverIp = localStorage.getItem('serverIp') || 'localhost';
+       this.serverIp = localStorage.getItem('serverIp') || 'https://routine-cables-compliance-shadow.trycloudflare.com';
     }
   }
 
